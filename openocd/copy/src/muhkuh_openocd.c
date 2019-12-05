@@ -472,7 +472,7 @@ void dcc_line_buffer_put(DCC_LINE_BUFFER_T* ptBuffer, const char *line)
 		}
 		else
 		{
-			printf("!Error: failed to allocate buffer for DCC debug message\n");
+			fprintf(stderr, "!Error: failed to allocate buffer for DCC debug message\n");
 		}
 
 	}
@@ -531,7 +531,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 
 	/* Get the target type name */
 	pcTargetTypeName = target_type_name(ptTarget);
-	fprintf(stderr, "target type: %s\n", pcTargetTypeName);
+//	fprintf(stderr, "target type: %s\n", pcTargetTypeName);
 
 	/* Expect failure. */
 	iResult = -1;
@@ -547,10 +547,10 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 	{
 		snprintf(strCmd, sizeof(strCmd)-1, "reg r0 0x%08X", ulR0);
 	}
-	
-	fprintf(stderr, "cmd: %s\n", strCmd);
+
+//	fprintf(stderr, "cmd: %s\n", strCmd);
 	iOocdResult = command_run_line(ptCmdCtx, strCmd);
-	fprintf(stderr, "result: %d\n", iOocdResult);
+//	fprintf(stderr, "result: %d\n", iOocdResult);
 	if( iOocdResult!=ERROR_OK )
 	{
 		fprintf(stderr, "muhkuh_openocd_call: set r0/a0 failed!\n");
@@ -561,9 +561,9 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 		/* Set the PC and then resume. 
 		   Resume <address> does not work on target hinetiol. */
 		snprintf(strCmd, sizeof(strCmd)-1, "reg pc 0x%08X", ulNetxAddress);
-		fprintf(stderr, "cmd: %s\n", strCmd);
+//		fprintf(stderr, "cmd: %s\n", strCmd);
 		iOocdResult = command_run_line(ptCmdCtx, strCmd);
-		fprintf(stderr, "result: %d\n", iOocdResult);
+//		fprintf(stderr, "result: %d\n", iOocdResult);
 		if( iOocdResult!=ERROR_OK )
 		{
 			fprintf(stderr, "muhkuh_openocd_call: set pc failed!\n");
@@ -572,9 +572,9 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 		{
 			memset(strCmd, 0, sizeof(strCmd));
 			snprintf(strCmd, sizeof(strCmd)-1, "resume");
-			fprintf(stderr, "cmd: %s\n", strCmd);
+//			fprintf(stderr, "cmd: %s\n", strCmd);
 			iOocdResult = command_run_line(ptCmdCtx, strCmd);
-			fprintf(stderr, "result: %d\n", iOocdResult);
+//			fprintf(stderr, "result: %d\n", iOocdResult);
 			if( iOocdResult!=ERROR_OK )
 			{
 				fprintf(stderr, "muhkuh_openocd_call: resume failed!\n");
@@ -593,7 +593,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 					//fprintf(stderr, "target state: %d\n", (unsigned long) tState);
 					if( tState==TARGET_HALTED )
 					{
-						fprintf(stderr, "call finished!\n");
+//						fprintf(stderr, "call finished!\n");
 						iResult = 0;
 					}
 					else
@@ -636,4 +636,3 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 
 	return iResult;
 }
-
