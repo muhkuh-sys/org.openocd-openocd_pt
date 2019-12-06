@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jonchki-artifact version="1.0">
 	<info group="org.openocd"
-	      module="openocd"
+	      module="openocd_pt"
 	      artifact="openocd"
 	      version="@PROJECT_VERSION@"
 	      vcs-id="@PROJECT_VERSION_VCS@"
@@ -21,6 +21,9 @@ layered architecture of JTAG interface and TAP support including:
 - embedded TCL interpreter for easy scripting.
 
 This version comes with a simple front-end for the LUA language.
+
+This is the production test version and not the version used in
+netX Studio.
 		</description>
 	</info>
 	<dependencies>

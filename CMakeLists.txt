@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-PROJECT("org.openocd.openocd-openocd")
+PROJECT("org.openocd.openocd_pt-openocd")
 
 # Get the VCS version for the jonchki configuration.
 INCLUDE(cmake/version.cmake)
