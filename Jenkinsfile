@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurperClassic
 
 node {
-    def ARTIFACTS_PATH = 'build/repository/org/openocd/openocd/*'
+    def ARTIFACTS_PATH = 'build/repository/org/openocd/openocd_pt/*'
     def strBuilds = env.JENKINS_SELECT_BUILDS
     def atBuilds = new JsonSlurperClassic().parseText(strBuilds)
 
@@ -23,7 +23,7 @@ node {
                         ]
                     ],
                     submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/muhkuh-sys/org.openocd.openocd.openocd.git']]
+                    userRemoteConfigs: [[url: 'https://github.com/muhkuh-sys/org.openocd-openocd_pt.git']]
                 ])
 
                 /* Build the project. */
