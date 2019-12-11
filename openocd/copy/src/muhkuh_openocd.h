@@ -4,9 +4,10 @@
 #ifndef __MUHKUH_OPENOCD_H__
 #define __MUHKUH_OPENOCD_H__
 
+typedef void (*PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T) (void *pvUser, const char *pcLine, size_t sizLine);
 typedef int (*PFN_MUHKUH_CALL_PRINT_CALLBACK) (void *pvCallbackUserData, uint8_t *pucData, unsigned long ulDataSize);
 
-void *muhkuh_openocd_init(const char *pcScriptSearchDir);
+void *muhkuh_openocd_init(const char *pcScriptSearchDir, PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T pfnOutputHandler, void *pvOutputHanderData);
 int muhkuh_openocd_get_result(void *pvContext, char *pcBuffer, size_t sizBufferMax);
 int muhkuh_openocd_get_result_alloc(void *pvContext, char **ppcBuffer, size_t *psizBuffer);
 int muhkuh_openocd_command_run_line(void *pvContext, char *pcLine);

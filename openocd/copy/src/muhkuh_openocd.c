@@ -11,38 +11,167 @@
 #include "target/target_request.h"
 
 
-void *muhkuh_openocd_init(const char *pcScriptSearchDir)
+#define MUHKUH_OUTPUT_BUFFER_MAGIC 0x686f6f4d
+
+typedef struct MUHKUH_OUTPUT_BUFFER_STRUCT
+{
+	unsigned long ulMagic;
+	PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T pfnOutput;
+	void *pvUser;
+	size_t sizUsed;
+	size_t sizMax;
+	char *pcBuffer;
+} MUHKUH_OUTPUT_BUFFER_T;
+
+
+int muhkuh_output_handler(struct command_context *ptContext, const char *pcLine)
+{
+	MUHKUH_OUTPUT_BUFFER_T *ptHandle;
+	size_t sizUsed;
+	size_t sizMax;
+	size_t sizLine;
+	size_t sizBufferNew;
+	char *pcBuffer;
+	char *pcBufferNew;
+	PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T pfnOutput;
+
+
+	if( pcLine!=NULL )
+	{
+		/* Is the handle valid? */
+		ptHandle = (MUHKUH_OUTPUT_BUFFER_T*)(ptContext->output_handler_priv);
+		if( ptHandle!=NULL && ptHandle->ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC && ptHandle->pfnOutput!=NULL )
+		{
+			pfnOutput = ptHandle->pfnOutput;
+			sizUsed = ptHandle->sizUsed;
+			sizMax = ptHandle->sizMax;
+			pcBuffer = ptHandle->pcBuffer;
+
+			/* Is data in the line? */
+			sizLine = strlen(pcLine);
+			if( sizLine>0 )
+			{
+				/* Can the line be printed as it is?
+				 * This is possible if...
+				 *  1) the line ends with a newline and
+				 *  2) the buffer is empty.
+				 */
+				if( pcLine[sizLine-1]=='\n' && sizUsed==0 )
+				{
+					/* Just pass the line without the newline to the handler. */
+					pfnOutput(ptHandle->pvUser, pcLine, sizLine-1);
+				}
+				else
+				{
+					/* Append the line to the buffer. */
+					sizBufferNew = sizUsed + sizLine;
+					/* Does a buffer already exist? */
+					if( sizMax==0 )
+					{
+						/* No -> allocate a new buffer. */
+						pcBufferNew = (char*)malloc(sizBufferNew);
+					}
+					else
+					{
+						/* Does the combined data fit into the existing buffer? */
+						if( sizBufferNew<=sizMax )
+						{
+							/* Yes -> keep the current buffer. */
+							pcBufferNew = pcBuffer;
+							sizBufferNew = sizMax;
+						}
+						else
+						{
+							/* No -> reallocate the buffer. */
+							pcBufferNew = (char*)realloc(pcBuffer, sizBufferNew);
+						}
+					}
+					if( pcBufferNew!=NULL )
+					{
+						/* Use the new buffer. */
+						pcBuffer = pcBufferNew;
+						sizMax = sizBufferNew;
+
+						/* Append the new data to the end of the buffer. */
+						memcpy(pcBuffer+sizUsed, pcLine, sizLine);
+						sizUsed += sizLine;
+
+						/* Does the buffer hold a complete line now? */
+						if( pcLine[sizUsed-1]=='\n' )
+						{
+							pfnOutput(ptHandle->pvUser, pcBuffer, sizUsed-1);
+
+							free(pcBuffer);
+							pcBuffer = NULL;
+							sizUsed = 0;
+							sizMax = 0;
+						}
+
+						/* Update the handle. */
+						ptHandle->sizUsed = sizUsed;
+						ptHandle->sizMax = sizMax;
+						ptHandle->pcBuffer = pcBuffer;
+					}
+				}
+			}
+		}
+		else
+		{
+			/* No valid output handler found. Just print the data. */
+			LOG_USER_N("%s", pcLine);
+		}
+	}
+
+	return ERROR_OK;
+}
+
+
+void *muhkuh_openocd_init(const char *pcScriptSearchDir, PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T pfnOutputHandler, void *pvOutputHanderData)
 {
 	/* Initialize command line interface. */
 	struct command_context *ptCmdCtx;
 	void *pvResult;
 	int iResult;
+	MUHKUH_OUTPUT_BUFFER_T *ptBuffer;
 
 
 	pvResult = NULL;
-	ptCmdCtx = setup_command_handler(NULL);
-	if( ptCmdCtx!=NULL )
+
+	/* Allocate a new output buffer. */
+	ptBuffer = (MUHKUH_OUTPUT_BUFFER_T*)malloc(sizeof(MUHKUH_OUTPUT_BUFFER_T));
+	if( ptBuffer!=NULL )
 	{
-		iResult = util_init(ptCmdCtx);
-		if( iResult==ERROR_OK )
+		ptBuffer->ulMagic = MUHKUH_OUTPUT_BUFFER_MAGIC;
+		ptBuffer->pfnOutput = pfnOutputHandler;
+		ptBuffer->pvUser = pvOutputHanderData;
+		ptBuffer->sizUsed = 0;
+		ptBuffer->sizMax = 0;
+		ptBuffer->pcBuffer = NULL;
+
+		ptCmdCtx = setup_command_handler(NULL);
+		if( ptCmdCtx!=NULL )
 		{
-			iResult = ioutil_init(ptCmdCtx);
+			iResult = util_init(ptCmdCtx);
 			if( iResult==ERROR_OK )
 			{
-				command_context_mode(ptCmdCtx, COMMAND_CONFIG);
-				command_set_output_handler(ptCmdCtx, configuration_output_handler, NULL);
-
-				/* Add a search path to the interpreter. */
-				if( pcScriptSearchDir!=NULL )
-				{
-					add_script_search_dir(pcScriptSearchDir);
-				}
-
-				iResult = server_preinit();
+				iResult = ioutil_init(ptCmdCtx);
 				if( iResult==ERROR_OK )
 				{
-					/* NOTE: do not call server_init. */
-					pvResult = ptCmdCtx;
+					command_context_mode(ptCmdCtx, COMMAND_CONFIG);
+					command_set_output_handler(ptCmdCtx, muhkuh_output_handler, ptBuffer);
+
+					/* Add a search path to the interpreter. */
+					if( pcScriptSearchDir!=NULL )
+					{
+						add_script_search_dir(pcScriptSearchDir);
+					}
+
+					iResult = server_preinit();
+					if( iResult==ERROR_OK )
+					{
+						/* NOTE: do not call server_init. */
+						pvResult = ptCmdCtx;
+					}
 				}
 			}
 		}
@@ -170,6 +299,7 @@ int muhkuh_openocd_command_run_line(void *pvContext, char *pcLine)
 void muhkuh_openocd_uninit(void *pvContext)
 {
 	struct command_context *ptCmdCtx;
+	MUHKUH_OUTPUT_BUFFER_T *ptHandle;
 
 
 	if( pvContext!=NULL )
@@ -177,6 +307,24 @@ void muhkuh_openocd_uninit(void *pvContext)
 		ptCmdCtx = (struct command_context *)pvContext;
 
 		unregister_all_commands(ptCmdCtx, NULL);
+
+		/* Close the output handler. */
+		ptHandle = (MUHKUH_OUTPUT_BUFFER_T*)(ptCmdCtx->output_handler_priv);
+		command_clear_output_handler(ptCmdCtx);
+		if( ptHandle!=NULL && ptHandle->ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC )
+		{
+			if( ptHandle->pcBuffer!=NULL )
+			{
+				/* Send any waiting data. */
+				if( ptHandle->pfnOutput!=NULL && ptHandle->sizUsed!=0 )
+				{
+					ptHandle->pfnOutput(ptHandle->pvUser, ptHandle->pcBuffer, ptHandle->sizUsed);
+				}
+				/* Free the buffer. */
+				free(ptHandle->pcBuffer);
+			}
+			free(ptHandle);
+		}
 
 		/* free commandline interface */
 		command_done(ptCmdCtx);
@@ -519,7 +667,9 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 	char strCmd[32];
 	int fIsRunning;
 	enum target_state tState;
-	char *pcTargetTypeName;
+	const char *pcTargetTypeName;
+	command_output_handler_t pfnOldOutputHandler;
+	void *pvOldOutputHandler;
 
 	DCC_LINE_BUFFER_T tDccLineBuffer = {NULL, 0};
 
@@ -582,6 +732,8 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 			else
 			{
 				// redirect output handler, then grab messages, restore default output handler on halt
+				pfnOldOutputHandler = ptCmdCtx->output_handler;
+				pvOldOutputHandler = ptCmdCtx->output_handler_priv;
 				command_set_output_handler(ptCmdCtx, &romloader_jtag_command_output_handler, &tDccLineBuffer);
 
 				/* Wait for halt. */
@@ -627,7 +779,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 				pfnCallback(pvCallbackUserData, tDccLineBuffer.pucDccData, tDccLineBuffer.ulDccDataSize);
 				dcc_line_buffer_clear(&tDccLineBuffer, 1);
 
-				command_clear_output_handler(ptCmdCtx);
+				command_set_output_handler(ptCmdCtx, pfnOldOutputHandler, pvOldOutputHandler);
 
 				/* FIXME: is this really necessary? */
 //				usleep(1000);
