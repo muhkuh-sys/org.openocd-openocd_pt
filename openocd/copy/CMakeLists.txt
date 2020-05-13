@@ -30,6 +30,12 @@ SET(BUILD_OSBDM 1)
 SET(BUILD_ULINK 1)
 SET(BUILD_USB_BLASTER_2 0)
 SET(BUILD_VSLLINK 0)
+# Build the bcm2835gpio and sysfsgpio driver on Raspberry. Both depend on bitbang.
+IF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
+	SET(BUILD_BCM2835GPIO 1)
+	SET(BUILD_SYSFSGPIO 1)
+	SET(BUILD_BITBANG 1)
+ENDIF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
 
 CHECK_INCLUDE_FILES(arpa/inet.h HAVE_ARPA_INET_H)
 CHECK_INCLUDE_FILES(dirent.h HAVE_DIRENT_H)
@@ -315,7 +321,9 @@ SET(SOURCES_libjtag
 	src/jtag/hla/hla_tcl.c
 	src/jtag/hla/hla_transport.c
 )
-
+IF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
+	LIST(APPEND SOURCES_libjtag src/jtag/drivers/sysfsgpio.c src/jtag/drivers/bcm2835gpio.c)
+ENDIF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
 
 SET(SOURCES_libpld
 	src/pld/pld.c
