@@ -24,7 +24,7 @@ SET(BUILD_FTDI 1)
 SET(BUILD_HLADAPTER 1)
 SET(BUILD_HLADAPTER_ICDI 1)
 SET(BUILD_HLADAPTER_STLINK 1)
-SET(BUILD_JLINK 0)
+SET(BUILD_JLINK 1)
 SET(BUILD_OPENDOUS 1)
 SET(BUILD_OSBDM 1)
 SET(BUILD_ULINK 1)
@@ -306,7 +306,6 @@ SET(SOURCES_libjtag
 	src/jtag/drivers/driver.c
 	src/jtag/drivers/dummy.c
 	src/jtag/drivers/ftdi.c
-#	src/jtag/drivers/jlink.c
 	src/jtag/drivers/jtag_vpi.c
 	src/jtag/drivers/libusb1_common.c
 	src/jtag/drivers/mpsse.c
@@ -324,6 +323,28 @@ SET(SOURCES_libjtag
 IF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
 	LIST(APPEND SOURCES_libjtag src/jtag/drivers/sysfsgpio.c src/jtag/drivers/bcm2835gpio.c)
 ENDIF((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm"))
+
+IF(BUILD_JLINK)
+	LIST(APPEND SOURCES_libjtag
+	src/jtag/drivers/jlink.c
+	src/jtag/drivers/libjaylink/libjaylink/buffer.c
+	src/jtag/drivers/libjaylink/libjaylink/core.c
+	src/jtag/drivers/libjaylink/libjaylink/device.c
+	src/jtag/drivers/libjaylink/libjaylink/emucom.c
+	src/jtag/drivers/libjaylink/libjaylink/error.c
+	src/jtag/drivers/libjaylink/libjaylink/fileio.c
+	src/jtag/drivers/libjaylink/libjaylink/jtag.c
+	src/jtag/drivers/libjaylink/libjaylink/list.c
+	src/jtag/drivers/libjaylink/libjaylink/log.c
+	src/jtag/drivers/libjaylink/libjaylink/strutil.c
+	src/jtag/drivers/libjaylink/libjaylink/swd.c
+	src/jtag/drivers/libjaylink/libjaylink/swo.c
+	src/jtag/drivers/libjaylink/libjaylink/target.c
+	src/jtag/drivers/libjaylink/libjaylink/transport.c
+	src/jtag/drivers/libjaylink/libjaylink/util.c
+	src/jtag/drivers/libjaylink/libjaylink/version.c
+	src/jtag/drivers/libjaylink/libjaylink/discovery.c)
+ENDIF(BUILD_JLINK)
 
 SET(SOURCES_libpld
 	src/pld/pld.c
