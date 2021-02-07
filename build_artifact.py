@@ -1,9 +1,8 @@
-#! /usr/bin/python2.7
+#! /usr/bin/python3
 
 from jonchki import cli_args
 from jonchki import install
 from jonchki import jonchkihere
-from jonchki import vcs_id
 
 import glob
 import os
@@ -36,7 +35,7 @@ strCfg_jonchkiHerePath = os.path.join(
     'jonchki'
 )
 # This is the Jonchki version to use.
-strCfg_jonchkiVersion = '0.0.5.1'
+strCfg_jonchkiVersion = '0.0.6.1'
 # Look in this folder for Jonchki archives before downloading them.
 strCfg_jonchkiLocalArchives = os.path.join(
     strCfg_projectFolder,
@@ -182,12 +181,6 @@ astrFolders = [
 for strPath in astrFolders:
     if os.path.exists(strPath) is not True:
         os.makedirs(strPath)
-
-# Try to get the VCS ID.
-strProjectVersionVcs, strProjectVersionVcsLong = vcs_id.get(
-    strCfg_projectFolder
-)
-print(strProjectVersionVcs, strProjectVersionVcsLong)
 
 
 # ---------------------------------------------------------------------------
