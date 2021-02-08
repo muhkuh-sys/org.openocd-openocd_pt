@@ -12,9 +12,6 @@ INCLUDE(CheckStructHasMember)
 INCLUDE(CheckTypeSize)
 
 
-FIND_PACKAGE("libusb" REQUIRED)
-
-
 #----------------------------------------------------------------------------
 #
 # Get all defines for config.h.in .
@@ -509,16 +506,19 @@ TARGET_INCLUDE_DIRECTORIES(LIBRARY_libopenocd
                                    src/jtag/drivers
                                    src/jtag/drivers/libjaylink
                                    ${LIBJIM_INCLUDE_DIRECTORIES}
-                                   ${CMAKE_CURRENT_BINARY_DIR}/config)
+                                   ${CMAKE_CURRENT_BINARY_DIR}/config
+                                   ${LIBUSB_INSTALL_PATH}/include/libusb-1.0)
 
 
 IF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	SET(LIBOPENOCD_LDFLAGS -lws2_32)
+	SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a)
 ELSE(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 	SET(LIBOPENOCD_LDFLAGS "")
+	SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a -ludev -pthread)
 ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 TARGET_LINK_LIBRARIES(LIBRARY_libopenocd
-                      PRIVATE LIBRARY_jim libusb::TARGET_libusb "${LIBOPENOCD_LDFLAGS}" "${LIBJIM_LDFLAGS}")
+                      PRIVATE LIBRARY_jim ${LIBUSB_LIBRARIES} "${LIBOPENOCD_LDFLAGS}" "${LIBJIM_LDFLAGS}")
 
 SET(LIBRARY_libopenocd_defines "")
 LIST(APPEND LIBRARY_libopenocd_defines "HAVE_CONFIG_H")
