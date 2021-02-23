@@ -1,0 +1,65 @@
+diff -uNr openocd-0.11.0-rc2/src/server/server.c openocd-0.11.0-rc2_patched/src/server/server.c
+--- openocd-0.11.0-rc2/src/server/server.c	2020-12-09 20:43:09.000000000 +0100
++++ openocd-0.11.0-rc2_patched/src/server/server.c	2021-02-23 16:10:19.893243991 +0100
+@@ -112,7 +112,7 @@
+ 
+ #ifdef _WIN32
+ 		/* we are using stdin/out so ignore ctrl-c under windoze */
+-		SetConsoleCtrlHandler(NULL, TRUE);
++//		SetConsoleCtrlHandler(NULL, TRUE);
+ #endif
+ 
+ 		/* do not check for new connections again on stdin */
+@@ -600,6 +600,7 @@
+ 	return shutdown_openocd == SHUTDOWN_WITH_ERROR_CODE ? ERROR_FAIL : ERROR_OK;
+ }
+ 
++#if 0
+ static void sig_handler(int sig)
+ {
+ 	/* store only first signal that hits us */
+@@ -629,6 +630,7 @@
+ 		LOG_DEBUG("Ignored Signal %d", sig);
+ }
+ #endif
++#endif
+ 
+ 
+ int server_host_os_entry(void)
+@@ -663,18 +665,18 @@
+ {
+ #ifdef _WIN32
+ 	/* register ctrl-c handler */
+-	SetConsoleCtrlHandler(ControlHandler, TRUE);
++//	SetConsoleCtrlHandler(ControlHandler, TRUE);
+ 
+-	signal(SIGBREAK, sig_handler);
+-	signal(SIGINT, sig_handler);
++//	signal(SIGBREAK, sig_handler);
++//	signal(SIGINT, sig_handler);
+ #else
+-	signal(SIGHUP, sig_handler);
+-	signal(SIGPIPE, sig_handler);
+-	signal(SIGQUIT, sigkey_handler);
+-	signal(SIGINT, sigkey_handler);
++//	signal(SIGHUP, sig_handler);
++//	signal(SIGPIPE, sig_handler);
++//	signal(SIGQUIT, sigkey_handler);
++//	signal(SIGINT, sigkey_handler);
+ #endif
+-	signal(SIGTERM, sig_handler);
+-	signal(SIGABRT, sig_handler);
++//	signal(SIGTERM, sig_handler);
++//	signal(SIGABRT, sig_handler);
+ 
+ 	return ERROR_OK;
+ }
+@@ -702,7 +704,7 @@
+ 	target_quit();
+ 
+ #ifdef _WIN32
+-	SetConsoleCtrlHandler(ControlHandler, FALSE);
++//	SetConsoleCtrlHandler(ControlHandler, FALSE);
+ 
+ 	return ERROR_OK;
+ #endif

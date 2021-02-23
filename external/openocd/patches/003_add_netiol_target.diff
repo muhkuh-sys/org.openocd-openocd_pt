@@ -1,0 +1,193 @@
+diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
+--- openocd-0.11.0-rc2/Makefile.in	2021-01-24 22:26:44.000000000 +0100
++++ openocd-0.11.0-rc2_patched/Makefile.in	2021-02-23 14:15:45.096671197 +0100
+@@ -634,6 +634,7 @@
+ 	src/target/a64_disassembler.c src/target/armv8.c \
+ 	src/target/armv8_cache.c src/target/mips64.c \
+ 	src/target/mips64_pracc.c src/target/mips_mips64.c \
++	src/target/hiahbl.c src/target/hinetiol.c \
+ 	src/target/algorithm.h src/target/arm.h src/target/arm_dpm.h \
+ 	src/target/arm_jtag.h src/target/arm_adi_v5.h \
+ 	src/target/armv7a_cache.h src/target/armv7a_cache_l2x.h \
+@@ -676,7 +677,8 @@
+ 	src/target/esirisc.h src/target/esirisc_jtag.h \
+ 	src/target/esirisc_regs.h src/target/esirisc_trace.h \
+ 	src/target/arc.h src/target/arc_cmd.h src/target/arc_jtag.h \
+-	src/target/arc_mem.h src/target/rtt.h
++	src/target/arc_mem.h src/target/rtt.h src/target/hiahbl.h \
++	src/target/hinetiol.h
+ am__objects_53 = src/target/libtarget_la-algorithm.lo \
+ 	src/target/libtarget_la-register.lo \
+ 	src/target/libtarget_la-image.lo \
+@@ -772,6 +774,8 @@
+ 	src/target/libtarget_la-mips_mips64.lo \
+ 	src/target/libtarget_la-trace.lo \
+ 	src/target/libtarget_la-mips_ejtag.lo
++am__objects_70 = src/target/libtarget_la-hiahbl.lo \
++	src/target/libtarget_la-hinetiol.lo
+ am_src_target_libtarget_la_OBJECTS = $(am__objects_53) \
+ 	$(am__objects_55) $(am__objects_57) $(am__objects_58) \
+ 	$(am__objects_59) $(am__objects_60) $(am__objects_61) \
+@@ -782,7 +786,7 @@
+ 	src/target/libtarget_la-dsp563xx_once.lo \
+ 	src/target/libtarget_la-dsp5680xx.lo \
+ 	src/target/libtarget_la-hla_target.lo $(am__objects_68) \
+-	$(am__objects_69)
++	$(am__objects_69) $(am__objects_70)
+ src_target_libtarget_la_OBJECTS =  \
+ 	$(am_src_target_libtarget_la_OBJECTS)
+ src_target_openrisc_libopenrisc_la_LIBADD =
+@@ -1094,6 +1098,8 @@
+ 	src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo \
+ 	src/target/$(DEPDIR)/libtarget_la-fa526.Plo \
+ 	src/target/$(DEPDIR)/libtarget_la-feroceon.Plo \
++	src/target/$(DEPDIR)/libtarget_la-hiahbl.Plo \
++	src/target/$(DEPDIR)/libtarget_la-hinetiol.Plo \
+ 	src/target/$(DEPDIR)/libtarget_la-hla_target.Plo \
+ 	src/target/$(DEPDIR)/libtarget_la-image.Plo \
+ 	src/target/$(DEPDIR)/libtarget_la-lakemont.Plo \
+@@ -1762,8 +1768,8 @@
+ 	$(INTEL_IA32_SRC) $(ESIRISC_SRC) $(ARC_SRC) src/target/avrt.c \
+ 	src/target/dsp563xx.c src/target/dsp563xx_once.c \
+ 	src/target/dsp5680xx.c src/target/hla_target.c $(ARMV8_SRC) \
+-	$(MIPS64_SRC) src/target/algorithm.h src/target/arm.h \
+-	src/target/arm_dpm.h src/target/arm_jtag.h \
++	$(MIPS64_SRC) $(NETIOL_SRC) src/target/algorithm.h \
++	src/target/arm.h src/target/arm_dpm.h src/target/arm_jtag.h \
+ 	src/target/arm_adi_v5.h src/target/armv7a_cache.h \
+ 	src/target/armv7a_cache_l2x.h src/target/armv7a_mmu.h \
+ 	src/target/arm_disassembler.h src/target/a64_disassembler.h \
+@@ -1805,7 +1811,8 @@
+ 	src/target/esirisc.h src/target/esirisc_jtag.h \
+ 	src/target/esirisc_regs.h src/target/esirisc_trace.h \
+ 	src/target/arc.h src/target/arc_cmd.h src/target/arc_jtag.h \
+-	src/target/arc_mem.h src/target/rtt.h
++	src/target/arc_mem.h src/target/rtt.h src/target/hiahbl.h \
++	src/target/hinetiol.h
+ TARGET_CORE_SRC = \
+ 	src/target/algorithm.c \
+ 	src/target/register.c \
+@@ -1935,6 +1942,10 @@
+         src/target/arc_jtag.c \
+         src/target/arc_mem.c
+ 
++NETIOL_SRC = \
++	src/target/hiahbl.c \
++	src/target/hinetiol.c
++
+ src_target_openrisc_libopenrisc_la_SOURCES = \
+ 	src/target/openrisc/or1k.c \
+ 	src/target/openrisc/or1k_du_adv.c \
+@@ -3127,6 +3138,10 @@
+ 	src/target/$(DEPDIR)/$(am__dirstamp)
+ src/target/libtarget_la-mips_mips64.lo: src/target/$(am__dirstamp) \
+ 	src/target/$(DEPDIR)/$(am__dirstamp)
++src/target/libtarget_la-hiahbl.lo: src/target/$(am__dirstamp) \
++	src/target/$(DEPDIR)/$(am__dirstamp)
++src/target/libtarget_la-hinetiol.lo: src/target/$(am__dirstamp) \
++	src/target/$(DEPDIR)/$(am__dirstamp)
+ 
+ src/target/libtarget.la: $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_DEPENDENCIES) $(EXTRA_src_target_libtarget_la_DEPENDENCIES) src/target/$(am__dirstamp)
+ 	$(AM_V_CCLD)$(LINK)  $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_LIBADD) $(LIBS)
+@@ -3534,6 +3549,8 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-fa526.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-feroceon.Plo@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-hiahbl.Plo@am__quote@ # am--include-marker
++@AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-hinetiol.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-hla_target.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-image.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-lakemont.Plo@am__quote@ # am--include-marker
+@@ -5002,6 +5019,20 @@
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+ @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/target/libtarget_la-mips_mips64.lo `test -f 'src/target/mips_mips64.c' || echo '$(srcdir)/'`src/target/mips_mips64.c
+ 
++src/target/libtarget_la-hiahbl.lo: src/target/hiahbl.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/target/libtarget_la-hiahbl.lo -MD -MP -MF src/target/$(DEPDIR)/libtarget_la-hiahbl.Tpo -c -o src/target/libtarget_la-hiahbl.lo `test -f 'src/target/hiahbl.c' || echo '$(srcdir)/'`src/target/hiahbl.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/target/$(DEPDIR)/libtarget_la-hiahbl.Tpo src/target/$(DEPDIR)/libtarget_la-hiahbl.Plo
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/target/hiahbl.c' object='src/target/libtarget_la-hiahbl.lo' libtool=yes @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/target/libtarget_la-hiahbl.lo `test -f 'src/target/hiahbl.c' || echo '$(srcdir)/'`src/target/hiahbl.c
++
++src/target/libtarget_la-hinetiol.lo: src/target/hinetiol.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/target/libtarget_la-hinetiol.lo -MD -MP -MF src/target/$(DEPDIR)/libtarget_la-hinetiol.Tpo -c -o src/target/libtarget_la-hinetiol.lo `test -f 'src/target/hinetiol.c' || echo '$(srcdir)/'`src/target/hinetiol.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/target/$(DEPDIR)/libtarget_la-hinetiol.Tpo src/target/$(DEPDIR)/libtarget_la-hinetiol.Plo
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/target/hinetiol.c' object='src/target/libtarget_la-hinetiol.lo' libtool=yes @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/target/libtarget_la-hinetiol.lo `test -f 'src/target/hinetiol.c' || echo '$(srcdir)/'`src/target/hinetiol.c
++
+ mostlyclean-libtool:
+ 	-rm -f *.lo
+ 
+@@ -5957,6 +5988,8 @@
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
++	-rm -f src/target/$(DEPDIR)/libtarget_la-hiahbl.Plo
++	-rm -f src/target/$(DEPDIR)/libtarget_la-hinetiol.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
+@@ -6422,6 +6455,8 @@
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
++	-rm -f src/target/$(DEPDIR)/libtarget_la-hiahbl.Plo
++	-rm -f src/target/$(DEPDIR)/libtarget_la-hinetiol.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
+ 	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
+diff -uNr openocd-0.11.0-rc2/src/target/Makefile.am openocd-0.11.0-rc2_patched/src/target/Makefile.am
+--- openocd-0.11.0-rc2/src/target/Makefile.am	2020-12-09 20:43:09.000000000 +0100
++++ openocd-0.11.0-rc2_patched/src/target/Makefile.am	2021-02-23 14:11:35.254570268 +0100
+@@ -32,7 +32,8 @@
+ 	%D%/dsp5680xx.c \
+ 	%D%/hla_target.c \
+ 	$(ARMV8_SRC) \
+-	$(MIPS64_SRC)
++	$(MIPS64_SRC) \
++	$(NETIOL_SRC)
+ 
+ if HAVE_CAPSTONE
+ %C%_libtarget_la_CPPFLAGS += $(CAPSTONE_CFLAGS)
+@@ -168,6 +169,10 @@
+         %D%/arc_jtag.c \
+         %D%/arc_mem.c
+ 
++NETIOL_SRC = \
++	%D%/hiahbl.c \
++	%D%/hinetiol.c
++
+ %C%_libtarget_la_SOURCES += \
+ 	%D%/algorithm.h \
+ 	%D%/arm.h \
+@@ -261,7 +266,9 @@
+ 	%D%/arc_cmd.h \
+ 	%D%/arc_jtag.h \
+ 	%D%/arc_mem.h \
+-	%D%/rtt.h
++	%D%/rtt.h \
++	%D%/hiahbl.h \
++	%D%/hinetiol.h
+ 
+ include %D%/openrisc/Makefile.am
+ include %D%/riscv/Makefile.am
+diff -uNr openocd-0.11.0-rc2/src/target/target.c openocd-0.11.0-rc2_patched/src/target/target.c
+--- openocd-0.11.0-rc2/src/target/target.c	2021-01-23 19:36:13.000000000 +0100
++++ openocd-0.11.0-rc2_patched/src/target/target.c	2021-02-23 14:07:56.753035272 +0100
+@@ -110,6 +110,7 @@
+ extern struct target_type mem_ap_target;
+ extern struct target_type esirisc_target;
+ extern struct target_type arcv2_target;
++extern struct target_type hinetiol_target;
+ 
+ static struct target_type *target_types[] = {
+ 	&arm7tdmi_target,
+@@ -148,6 +149,7 @@
+ 	&arcv2_target,
+ 	&aarch64_target,
+ 	&mips_mips64_target,
++	&hinetiol_target,
+ 	NULL,
+ };
+ 

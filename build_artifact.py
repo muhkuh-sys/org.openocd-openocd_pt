@@ -176,7 +176,8 @@ else:
 
 # Create the folders if they do not exist yet.
 astrFolders = [
-    strCfg_workingFolder
+    strCfg_workingFolder,
+    os.path.join(strCfg_workingFolder, 'external')
 ]
 for strPath in astrFolders:
     if os.path.exists(strPath) is not True:
@@ -187,19 +188,39 @@ for strPath in astrFolders:
 #
 # Build the 
 #
+
 astrCmd = [
     'cmake',
     '-DCMAKE_INSTALL_PREFIX=""',
     '-DPRJ_DIR=%s' % strCfg_projectFolder,
-    '-DWORKING_DIR=%s' % strCfg_workingFolder
+    '-DWORKING_DIR=%s' % os.path.join(strCfg_workingFolder, 'external')
 ]
 astrCmd.extend(astrCMAKE_COMPILER)
 astrCmd.extend(astrCMAKE_PLATFORM)
-astrCmd.append(strCfg_projectFolder)
-subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
+astrCmd.append(os.path.join(strCfg_projectFolder, 'external'))
+subprocess.check_call(' '.join(astrCmd), shell=True, cwd=os.path.join(strCfg_workingFolder, 'external'))
 
 astrCmd = [
-    strMake,
-    'pack'
+    strMake
+#    'install'
 ]
-subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
+subprocess.check_call(' '.join(astrCmd), shell=True, cwd=os.path.join(strCfg_workingFolder, 'external'))
+
+
+
+#astrCmd = [
+#    'cmake',
+#    '-DCMAKE_INSTALL_PREFIX=""',
+#    '-DPRJ_DIR=%s' % strCfg_projectFolder,
+#    '-DWORKING_DIR=%s' % strCfg_workingFolder
+#]
+#astrCmd.extend(astrCMAKE_COMPILER)
+#astrCmd.extend(astrCMAKE_PLATFORM)
+#astrCmd.append(strCfg_projectFolder)
+#subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
+#
+#astrCmd = [
+#    strMake,
+#    'pack'
+#]
+#subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
