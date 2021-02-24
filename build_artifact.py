@@ -202,25 +202,23 @@ subprocess.check_call(' '.join(astrCmd), shell=True, cwd=os.path.join(strCfg_wor
 
 astrCmd = [
     strMake
-#    'install'
 ]
 subprocess.check_call(' '.join(astrCmd), shell=True, cwd=os.path.join(strCfg_workingFolder, 'external'))
 
 
+astrCmd = [
+    'cmake',
+    '-DCMAKE_INSTALL_PREFIX=""',
+    '-DPRJ_DIR=%s' % strCfg_projectFolder,
+    '-DWORKING_DIR=%s' % strCfg_workingFolder
+]
+astrCmd.extend(astrCMAKE_COMPILER)
+astrCmd.extend(astrCMAKE_PLATFORM)
+astrCmd.append(strCfg_projectFolder)
+subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
 
-#astrCmd = [
-#    'cmake',
-#    '-DCMAKE_INSTALL_PREFIX=""',
-#    '-DPRJ_DIR=%s' % strCfg_projectFolder,
-#    '-DWORKING_DIR=%s' % strCfg_workingFolder
-#]
-#astrCmd.extend(astrCMAKE_COMPILER)
-#astrCmd.extend(astrCMAKE_PLATFORM)
-#astrCmd.append(strCfg_projectFolder)
-#subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
-#
-#astrCmd = [
-#    strMake,
+astrCmd = [
+    strMake
 #    'pack'
-#]
-#subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
+]
+subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)

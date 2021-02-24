@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7)
 
-SET(VERSION_EXTERNAL "0.10.0")
-SET(VERSION_PACKAGE "8")
+SET(VERSION_EXTERNAL "0.11.0")
+SET(VERSION_PACKAGE "1")
 
 PROJECT("openocd")
 
@@ -15,27 +15,43 @@ FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
 
 
 #----------------------------------------------------------------------------
-#
-# Build the project.
-#
-SET(OPENOCD_CMAKE_ARGS "")
-LIST(APPEND OPENOCD_CMAKE_ARGS "-DPRJ_DIR=${PRJ_DIR}")
-LIST(APPEND OPENOCD_CMAKE_ARGS "-DWORKING_DIR=${WORKING_DIR}")
-LIST(APPEND OPENOCD_CMAKE_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
-LIST(APPEND OPENOCD_CMAKE_ARGS "-DLIBUSB_INSTALL_PATH=${CMAKE_CURRENT_BINARY_DIR}/../libusb/install")
-LIST(APPEND OPENOCD_CMAKE_ARGS "-DVERSION_EXTERNAL=${VERSION_EXTERNAL}")
 
-ExternalProject_Add(TARGET_openocd
-                    DEPENDS TARGET_libusb
-                    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openocd-${VERSION_EXTERNAL}
-                    URL ${CMAKE_CURRENT_SOURCE_DIR}/openocd-${VERSION_EXTERNAL}.tar.bz2
-                    URL_HASH SHA1=3245d43d60a1a93f8b0f6b1ce20b53e38cab7a4a
-                    PATCH_COMMAND "${PYTHON_EXECUTABLE}" ${CMAKE_HOME_DIRECTORY}/cmake/tools/apply_patches.py --working-folder ${CMAKE_CURRENT_BINARY_DIR}/openocd-${VERSION_EXTERNAL}/src/TARGET_openocd --patch-folder ${CMAKE_CURRENT_SOURCE_DIR}/patches --strip 1 --copy-folder ${CMAKE_CURRENT_SOURCE_DIR}/copy
-                    CMAKE_ARGS ${OPENOCD_CMAKE_ARGS}
-                    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${CMAKE_CURRENT_BINARY_DIR}
-)
+SET(LIBUSB_INSTALL_PATH "${CMAKE_BINARY_DIR}/external/libusb/install")
+SET(OPENOCD_LIBRARY "${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/src/.libs/libopenocd.a")
+
+IF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        SET(LIBOPENOCD_LDFLAGS -lws2_32)
+        SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a)
+ELSE(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        SET(LIBOPENOCD_LDFLAGS "")
+        SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a -ludev -pthread)
+ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+
+ADD_LIBRARY(LIBRARY_libopenocd SHARED
+            muhkuh_openocd.c)
+TARGET_INCLUDE_DIRECTORIES(LIBRARY_libopenocd
+                           PRIVATE ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd/src
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd/src/helper
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd/src/jtag/drivers
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd/src/jtag/drivers/libjaylink
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd/jimtcl
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/jimtcl
+                                   ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/src)
+
+TARGET_LINK_LIBRARIES(LIBRARY_libopenocd
+                      PRIVATE ${LIBUSB_LIBRARIES} ${OPENOCD_LIBRARY} "${LIBOPENOCD_LDFLAGS}")
+TARGET_COMPILE_DEFINITIONS(LIBRARY_libopenocd
+                           PRIVATE HAVE_CONFIG_H
+                                   RELSTR=""
+                                   GITVERSION="")
+# Set the name of the output file to "openocd".
+SET_TARGET_PROPERTIES(LIBRARY_libopenocd PROPERTIES
+                      PREFIX ""
+                      OUTPUT_NAME "openocd")
 
 
+IF(0)
 #----------------------------------------------------------------------------
 #
 # Build a package for the selected platform.
@@ -109,3 +125,4 @@ SET(POM_PACKAGING    "tar.xz")
 CONFIGURE_FILE(installer/pom.xml
                ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}.pom
                @ONLY)
+ENDIF(0)

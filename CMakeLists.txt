@@ -27,7 +27,6 @@ FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
 #
 # Include the projects in the subdirectories.
 #
-ADD_SUBDIRECTORY(libusb)
 ADD_SUBDIRECTORY(openocd)
 
 #----------------------------------------------------------------------------
