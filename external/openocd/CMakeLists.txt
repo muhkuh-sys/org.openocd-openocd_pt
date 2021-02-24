@@ -13,13 +13,12 @@ INCLUDE(ExternalProject)
 # Python is required for the patch script.
 FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
 
-
 ExternalProject_Add(TARGET_openocd
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openocd
                     URL ${CMAKE_CURRENT_SOURCE_DIR}/openocd-0.11.0-rc2.tar.bz2
                     URL_HASH SHA1=ec8642a5df994628975c8107306ba6bc7a12039d
                     PATCH_COMMAND "${PYTHON_EXECUTABLE}" ${CMAKE_HOME_DIRECTORY}/../cmake/tools/apply_patches.py --working-folder ${CMAKE_CURRENT_BINARY_DIR}/openocd/src/TARGET_openocd --patch-folder ${CMAKE_CURRENT_SOURCE_DIR}/patches --strip 1 --copy-folder ${CMAKE_CURRENT_SOURCE_DIR}/copy
-                    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E env "PKG_CONFIG_PATH=${CMAKE_CURRENT_BINARY_DIR}/libusb/install/lib/pkgconfig" ${CMAKE_CURRENT_BINARY_DIR}/openocd/src/TARGET_openocd/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/install --enable-static=yes --enable-shared=no --with-pic ${CONFIGURE_HOST}
+                    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E env "CFLAGS=-fPIC" "PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/libusb/install/lib/pkgconfig" ${CMAKE_CURRENT_BINARY_DIR}/openocd/src/TARGET_openocd/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}/install --enable-static=yes --enable-shared=no --with-pic ${CONFIGURE_HOST} --enable-ftdi --enable-stlink --enable-ti-icdi --enable-ulink --enable-usb-blaster-2 --enable-ft232r --enable-vsllink --enable-xds110 --enable-cmsis-dap-v2 --enable-osbdm --enable-opendous --enable-aice --enable-jlink
                     BUILD_COMMAND make
                     INSTALL_COMMAND make install
 )

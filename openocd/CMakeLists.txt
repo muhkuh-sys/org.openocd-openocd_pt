@@ -18,6 +18,7 @@ FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
 
 SET(LIBUSB_INSTALL_PATH "${CMAKE_BINARY_DIR}/external/libusb/install")
 SET(OPENOCD_LIBRARY "${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/src/.libs/libopenocd.a")
+SET(JIMTCL_LIBRARY "${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/jimtcl/libjim.a")
 
 IF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         SET(LIBOPENOCD_LDFLAGS -lws2_32)
@@ -40,7 +41,7 @@ TARGET_INCLUDE_DIRECTORIES(LIBRARY_libopenocd
                                    ${CMAKE_BINARY_DIR}/external/openocd/openocd/src/TARGET_openocd-build/src)
 
 TARGET_LINK_LIBRARIES(LIBRARY_libopenocd
-                      PRIVATE ${LIBUSB_LIBRARIES} ${OPENOCD_LIBRARY} "${LIBOPENOCD_LDFLAGS}")
+                      PRIVATE ${OPENOCD_LIBRARY} ${JIMTCL_LIBRARY} ${LIBUSB_LIBRARIES} "${LIBOPENOCD_LDFLAGS}")
 TARGET_COMPILE_DEFINITIONS(LIBRARY_libopenocd
                            PRIVATE HAVE_CONFIG_H
                                    RELSTR=""
