@@ -1,6 +1,6 @@
-diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
---- openocd-0.11.0-rc2/Makefile.in	2021-01-24 22:26:44.000000000 +0100
-+++ openocd-0.11.0-rc2_patched/Makefile.in	2021-02-23 14:15:45.096671197 +0100
+diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
+--- openocd-0.11.0/Makefile.in	2021-03-07 12:02:20.000000000 +0100
++++ openocd-0.11.0_patched/Makefile.in	2021-03-18 23:10:58.569950314 +0100
 @@ -634,6 +634,7 @@
  	src/target/a64_disassembler.c src/target/armv8.c \
  	src/target/armv8_cache.c src/target/mips64.c \
@@ -46,7 +46,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  	src/target/$(DEPDIR)/libtarget_la-hla_target.Plo \
  	src/target/$(DEPDIR)/libtarget_la-image.Plo \
  	src/target/$(DEPDIR)/libtarget_la-lakemont.Plo \
-@@ -1762,8 +1768,8 @@
+@@ -1763,8 +1769,8 @@
  	$(INTEL_IA32_SRC) $(ESIRISC_SRC) $(ARC_SRC) src/target/avrt.c \
  	src/target/dsp563xx.c src/target/dsp563xx_once.c \
  	src/target/dsp5680xx.c src/target/hla_target.c $(ARMV8_SRC) \
@@ -57,7 +57,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  	src/target/arm_adi_v5.h src/target/armv7a_cache.h \
  	src/target/armv7a_cache_l2x.h src/target/armv7a_mmu.h \
  	src/target/arm_disassembler.h src/target/a64_disassembler.h \
-@@ -1805,7 +1811,8 @@
+@@ -1806,7 +1812,8 @@
  	src/target/esirisc.h src/target/esirisc_jtag.h \
  	src/target/esirisc_regs.h src/target/esirisc_trace.h \
  	src/target/arc.h src/target/arc_cmd.h src/target/arc_jtag.h \
@@ -67,7 +67,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  TARGET_CORE_SRC = \
  	src/target/algorithm.c \
  	src/target/register.c \
-@@ -1935,6 +1942,10 @@
+@@ -1936,6 +1943,10 @@
          src/target/arc_jtag.c \
          src/target/arc_mem.c
  
@@ -78,7 +78,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  src_target_openrisc_libopenrisc_la_SOURCES = \
  	src/target/openrisc/or1k.c \
  	src/target/openrisc/or1k_du_adv.c \
-@@ -3127,6 +3138,10 @@
+@@ -3128,6 +3139,10 @@
  	src/target/$(DEPDIR)/$(am__dirstamp)
  src/target/libtarget_la-mips_mips64.lo: src/target/$(am__dirstamp) \
  	src/target/$(DEPDIR)/$(am__dirstamp)
@@ -89,7 +89,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  
  src/target/libtarget.la: $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_DEPENDENCIES) $(EXTRA_src_target_libtarget_la_DEPENDENCIES) src/target/$(am__dirstamp)
  	$(AM_V_CCLD)$(LINK)  $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_LIBADD) $(LIBS)
-@@ -3534,6 +3549,8 @@
+@@ -3535,6 +3550,8 @@
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-fa526.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-feroceon.Plo@am__quote@ # am--include-marker
@@ -98,7 +98,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-hla_target.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-image.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-lakemont.Plo@am__quote@ # am--include-marker
-@@ -5002,6 +5019,20 @@
+@@ -5003,6 +5020,20 @@
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/target/libtarget_la-mips_mips64.lo `test -f 'src/target/mips_mips64.c' || echo '$(srcdir)/'`src/target/mips_mips64.c
  
@@ -119,7 +119,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  mostlyclean-libtool:
  	-rm -f *.lo
  
-@@ -5957,6 +5988,8 @@
+@@ -5958,6 +5989,8 @@
  	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
@@ -128,7 +128,7 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
-@@ -6422,6 +6455,8 @@
+@@ -6423,6 +6456,8 @@
  	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
@@ -137,9 +137,9 @@ diff -uNr openocd-0.11.0-rc2/Makefile.in openocd-0.11.0-rc2_patched/Makefile.in
  	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
-diff -uNr openocd-0.11.0-rc2/src/target/Makefile.am openocd-0.11.0-rc2_patched/src/target/Makefile.am
---- openocd-0.11.0-rc2/src/target/Makefile.am	2020-12-09 20:43:09.000000000 +0100
-+++ openocd-0.11.0-rc2_patched/src/target/Makefile.am	2021-02-23 14:11:35.254570268 +0100
+diff -uNr openocd-0.11.0/src/target/Makefile.am openocd-0.11.0_patched/src/target/Makefile.am
+--- openocd-0.11.0/src/target/Makefile.am	2020-12-09 20:43:09.000000000 +0100
++++ openocd-0.11.0_patched/src/target/Makefile.am	2021-03-18 23:10:58.569950314 +0100
 @@ -32,7 +32,8 @@
  	%D%/dsp5680xx.c \
  	%D%/hla_target.c \
@@ -172,9 +172,9 @@ diff -uNr openocd-0.11.0-rc2/src/target/Makefile.am openocd-0.11.0-rc2_patched/s
  
  include %D%/openrisc/Makefile.am
  include %D%/riscv/Makefile.am
-diff -uNr openocd-0.11.0-rc2/src/target/target.c openocd-0.11.0-rc2_patched/src/target/target.c
---- openocd-0.11.0-rc2/src/target/target.c	2021-01-23 19:36:13.000000000 +0100
-+++ openocd-0.11.0-rc2_patched/src/target/target.c	2021-02-23 14:07:56.753035272 +0100
+diff -uNr openocd-0.11.0/src/target/target.c openocd-0.11.0_patched/src/target/target.c
+--- openocd-0.11.0/src/target/target.c	2021-03-07 11:32:52.000000000 +0100
++++ openocd-0.11.0_patched/src/target/target.c	2021-03-18 23:10:58.569950314 +0100
 @@ -110,6 +110,7 @@
  extern struct target_type mem_ap_target;
  extern struct target_type esirisc_target;
