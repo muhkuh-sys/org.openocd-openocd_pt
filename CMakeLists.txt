@@ -27,6 +27,7 @@ FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
 #
 # Include the projects in the subdirectories.
 #
+ADD_SUBDIRECTORY(external)
 ADD_SUBDIRECTORY(openocd)
 
 #----------------------------------------------------------------------------

@@ -50,6 +50,7 @@ TARGET_COMPILE_DEFINITIONS(LIBRARY_libopenocd
 SET_TARGET_PROPERTIES(LIBRARY_libopenocd PROPERTIES
                       PREFIX ""
                       OUTPUT_NAME "openocd")
+ADD_DEPENDENCIES(LIBRARY_libopenocd TARGET_openocd)
 
 
 #----------------------------------------------------------------------------
