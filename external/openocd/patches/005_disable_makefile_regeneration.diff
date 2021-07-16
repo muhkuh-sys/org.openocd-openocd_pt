@@ -1,0 +1,240 @@
+diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
+--- openocd-0.11.0/Makefile.in	2021-07-16 15:41:32.524967341 +0200
++++ openocd-0.11.0_patched/Makefile.in	2021-07-16 15:42:42.296921588 +0200
+@@ -2178,40 +2178,40 @@
+ 
+ .SUFFIXES:
+ .SUFFIXES: .c .dvi .lo .o .obj .ps
+-am--refresh: Makefile
+-	@:
+-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/src/Makefile.am $(srcdir)/src/helper/Makefile.am $(srcdir)/src/jtag/Makefile.am $(srcdir)/src/jtag/hla/Makefile.am $(srcdir)/src/jtag/aice/Makefile.am $(srcdir)/src/jtag/drivers/Makefile.am $(srcdir)/src/jtag/drivers/usb_blaster/Makefile.am $(srcdir)/src/transport/Makefile.am $(srcdir)/src/xsvf/Makefile.am $(srcdir)/src/svf/Makefile.am $(srcdir)/src/target/Makefile.am $(srcdir)/src/target/openrisc/Makefile.am $(srcdir)/src/target/riscv/Makefile.am $(srcdir)/src/rtos/Makefile.am $(srcdir)/src/server/Makefile.am $(srcdir)/src/flash/Makefile.am $(srcdir)/src/flash/nor/Makefile.am $(srcdir)/src/flash/nand/Makefile.am $(srcdir)/src/pld/Makefile.am $(srcdir)/src/rtt/Makefile.am $(srcdir)/doc/Makefile.am $(am__configure_deps)
+-	@for dep in $?; do \
+-	  case '$(am__configure_deps)' in \
+-	    *$$dep*) \
+-	      echo ' cd $(srcdir) && $(AUTOMAKE) --gnu'; \
+-	      $(am__cd) $(srcdir) && $(AUTOMAKE) --gnu \
+-		&& exit 0; \
+-	      exit 1;; \
+-	  esac; \
+-	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile'; \
+-	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --gnu Makefile
+-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+-	@case '$?' in \
+-	  *config.status*) \
+-	    echo ' $(SHELL) ./config.status'; \
+-	    $(SHELL) ./config.status;; \
+-	  *) \
+-	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
+-	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
+-	esac;
+-$(srcdir)/src/Makefile.am $(srcdir)/src/helper/Makefile.am $(srcdir)/src/jtag/Makefile.am $(srcdir)/src/jtag/hla/Makefile.am $(srcdir)/src/jtag/aice/Makefile.am $(srcdir)/src/jtag/drivers/Makefile.am $(srcdir)/src/jtag/drivers/usb_blaster/Makefile.am $(srcdir)/src/transport/Makefile.am $(srcdir)/src/xsvf/Makefile.am $(srcdir)/src/svf/Makefile.am $(srcdir)/src/target/Makefile.am $(srcdir)/src/target/openrisc/Makefile.am $(srcdir)/src/target/riscv/Makefile.am $(srcdir)/src/rtos/Makefile.am $(srcdir)/src/server/Makefile.am $(srcdir)/src/flash/Makefile.am $(srcdir)/src/flash/nor/Makefile.am $(srcdir)/src/flash/nand/Makefile.am $(srcdir)/src/pld/Makefile.am $(srcdir)/src/rtt/Makefile.am $(srcdir)/doc/Makefile.am $(am__empty):
+-
+-$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+-	$(SHELL) ./config.status --recheck
+-
+-$(top_srcdir)/configure:  $(am__configure_deps)
+-	$(am__cd) $(srcdir) && $(AUTOCONF)
+-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+-	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
+-$(am__aclocal_m4_deps):
++#am--refresh: Makefile
++#	@:
++#$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/src/Makefile.am $(srcdir)/src/helper/Makefile.am $(srcdir)/src/jtag/Makefile.am $(srcdir)/src/jtag/hla/Makefile.am $(srcdir)/src/jtag/aice/Makefile.am $(srcdir)/src/jtag/drivers/Makefile.am $(srcdir)/src/jtag/drivers/usb_blaster/Makefile.am $(srcdir)/src/transport/Makefile.am $(srcdir)/src/xsvf/Makefile.am $(srcdir)/src/svf/Makefile.am $(srcdir)/src/target/Makefile.am $(srcdir)/src/target/openrisc/Makefile.am $(srcdir)/src/target/riscv/Makefile.am $(srcdir)/src/rtos/Makefile.am $(srcdir)/src/server/Makefile.am $(srcdir)/src/flash/Makefile.am $(srcdir)/src/flash/nor/Makefile.am $(srcdir)/src/flash/nand/Makefile.am $(srcdir)/src/pld/Makefile.am $(srcdir)/src/rtt/Makefile.am $(srcdir)/doc/Makefile.am $(am__configure_deps)
++#	@for dep in $?; do \
++#	  case '$(am__configure_deps)' in \
++#	    *$$dep*) \
++#	      echo ' cd $(srcdir) && $(AUTOMAKE) --gnu'; \
++#	      $(am__cd) $(srcdir) && $(AUTOMAKE) --gnu \
++#		&& exit 0; \
++#	      exit 1;; \
++#	  esac; \
++#	done; \
++#	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile'; \
++#	$(am__cd) $(top_srcdir) && \
++#	  $(AUTOMAKE) --gnu Makefile
++#Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
++#	@case '$?' in \
++#	  *config.status*) \
++#	    echo ' $(SHELL) ./config.status'; \
++#	    $(SHELL) ./config.status;; \
++#	  *) \
++#	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
++#	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
++#	esac;
++#$(srcdir)/src/Makefile.am $(srcdir)/src/helper/Makefile.am $(srcdir)/src/jtag/Makefile.am $(srcdir)/src/jtag/hla/Makefile.am $(srcdir)/src/jtag/aice/Makefile.am $(srcdir)/src/jtag/drivers/Makefile.am $(srcdir)/src/jtag/drivers/usb_blaster/Makefile.am $(srcdir)/src/transport/Makefile.am $(srcdir)/src/xsvf/Makefile.am $(srcdir)/src/svf/Makefile.am $(srcdir)/src/target/Makefile.am $(srcdir)/src/target/openrisc/Makefile.am $(srcdir)/src/target/riscv/Makefile.am $(srcdir)/src/rtos/Makefile.am $(srcdir)/src/server/Makefile.am $(srcdir)/src/flash/Makefile.am $(srcdir)/src/flash/nor/Makefile.am $(srcdir)/src/flash/nand/Makefile.am $(srcdir)/src/pld/Makefile.am $(srcdir)/src/rtt/Makefile.am $(srcdir)/doc/Makefile.am $(am__empty):
++#
++#$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++#	$(SHELL) ./config.status --recheck
++#
++#$(top_srcdir)/configure:  $(am__configure_deps)
++#	$(am__cd) $(srcdir) && $(AUTOCONF)
++#$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
++#	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
++#$(am__aclocal_m4_deps):
+ 
+ config.h: stamp-h1
+ 	@test -f $@ || rm -f stamp-h1
+@@ -6538,7 +6538,7 @@
+ 	install-data-am install-strip uninstall-am
+ 
+ .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
+-	am--depfiles am--refresh check check-am clean clean-aminfo \
++	am--depfiles check check-am clean clean-aminfo \
+ 	clean-binPROGRAMS clean-cscope clean-generic clean-libtool \
+ 	clean-noinstLTLIBRARIES cscope cscopelist-am ctags ctags-am \
+ 	dist dist-all dist-bzip2 dist-gzip dist-hook dist-info \
+diff -uNr openocd-0.11.0/src/jtag/drivers/libjaylink/libjaylink/Makefile.in openocd-0.11.0_patched/src/jtag/drivers/libjaylink/libjaylink/Makefile.in
+--- openocd-0.11.0/src/jtag/drivers/libjaylink/libjaylink/Makefile.in	2021-07-16 15:41:32.464967381 +0200
++++ openocd-0.11.0_patched/src/jtag/drivers/libjaylink/libjaylink/Makefile.in	2021-07-16 15:43:31.024889838 +0200
+@@ -409,35 +409,35 @@
+ 
+ .SUFFIXES:
+ .SUFFIXES: .c .lo .o .obj
+-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+-	@for dep in $?; do \
+-	  case '$(am__configure_deps)' in \
+-	    *$$dep*) \
+-	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
+-	        && { if test -f $@; then exit 0; else break; fi; }; \
+-	      exit 1;; \
+-	  esac; \
+-	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libjaylink/Makefile'; \
+-	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --foreign libjaylink/Makefile
+-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+-	@case '$?' in \
+-	  *config.status*) \
+-	    cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \
+-	  *) \
+-	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
+-	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
+-	esac;
+-
+-$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+-
+-$(top_srcdir)/configure:  $(am__configure_deps)
+-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+-	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+-$(am__aclocal_m4_deps):
++#$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
++#	@for dep in $?; do \
++#	  case '$(am__configure_deps)' in \
++#	    *$$dep*) \
++#	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
++#	        && { if test -f $@; then exit 0; else break; fi; }; \
++#	      exit 1;; \
++#	  esac; \
++#	done; \
++#	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libjaylink/Makefile'; \
++#	$(am__cd) $(top_srcdir) && \
++#	  $(AUTOMAKE) --foreign libjaylink/Makefile
++#Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
++#	@case '$?' in \
++#	  *config.status*) \
++#	    cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \
++#	  *) \
++#	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
++#	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
++#	esac;
++#
++#$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++#	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++#
++#$(top_srcdir)/configure:  $(am__configure_deps)
++#	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++#$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
++#	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++#$(am__aclocal_m4_deps):
+ version.h: $(top_builddir)/config.status $(srcdir)/version.h.in
+ 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ 
+diff -uNr openocd-0.11.0/src/jtag/drivers/libjaylink/Makefile.in openocd-0.11.0_patched/src/jtag/drivers/libjaylink/Makefile.in
+--- openocd-0.11.0/src/jtag/drivers/libjaylink/Makefile.in	2021-07-16 15:41:32.460967384 +0200
++++ openocd-0.11.0_patched/src/jtag/drivers/libjaylink/Makefile.in	2021-07-16 15:43:16.248899449 +0200
+@@ -386,39 +386,39 @@
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
+ .SUFFIXES:
+-am--refresh: Makefile
+-	@:
+-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+-	@for dep in $?; do \
+-	  case '$(am__configure_deps)' in \
+-	    *$$dep*) \
+-	      echo ' cd $(srcdir) && $(AUTOMAKE) --foreign'; \
+-	      $(am__cd) $(srcdir) && $(AUTOMAKE) --foreign \
+-		&& exit 0; \
+-	      exit 1;; \
+-	  esac; \
+-	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile'; \
+-	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --foreign Makefile
+-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+-	@case '$?' in \
+-	  *config.status*) \
+-	    echo ' $(SHELL) ./config.status'; \
+-	    $(SHELL) ./config.status;; \
+-	  *) \
+-	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
+-	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
+-	esac;
+-
+-$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+-	$(SHELL) ./config.status --recheck
+-
+-$(top_srcdir)/configure:  $(am__configure_deps)
+-	$(am__cd) $(srcdir) && $(AUTOCONF)
+-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+-	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
+-$(am__aclocal_m4_deps):
++#am--refresh: Makefile
++#	@:
++#$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
++#	@for dep in $?; do \
++#	  case '$(am__configure_deps)' in \
++#	    *$$dep*) \
++#	      echo ' cd $(srcdir) && $(AUTOMAKE) --foreign'; \
++#	      $(am__cd) $(srcdir) && $(AUTOMAKE) --foreign \
++#		&& exit 0; \
++#	      exit 1;; \
++#	  esac; \
++#	done; \
++#	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile'; \
++#	$(am__cd) $(top_srcdir) && \
++#	  $(AUTOMAKE) --foreign Makefile
++#Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
++#	@case '$?' in \
++#	  *config.status*) \
++#	    echo ' $(SHELL) ./config.status'; \
++#	    $(SHELL) ./config.status;; \
++#	  *) \
++#	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
++#	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
++#	esac;
++#
++#$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++#	$(SHELL) ./config.status --recheck
++#
++#$(top_srcdir)/configure:  $(am__configure_deps)
++#	$(am__cd) $(srcdir) && $(AUTOCONF)
++#$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
++#	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
++#$(am__aclocal_m4_deps):
+ 
+ config.h: stamp-h1
+ 	@test -f $@ || rm -f stamp-h1
+@@ -877,7 +877,7 @@
+ .MAKE: $(am__recursive_targets) all install-am install-strip
+ 
+ .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
+-	am--refresh check check-am clean clean-cscope clean-generic \
++	check check-am clean clean-cscope clean-generic \
+ 	clean-libtool cscope cscopelist-am ctags ctags-am dist \
+ 	dist-all dist-bzip2 dist-gzip dist-lzip dist-shar dist-tarZ \
+ 	dist-xz dist-zip distcheck distclean distclean-generic \
