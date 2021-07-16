@@ -52,7 +52,6 @@ SET_TARGET_PROPERTIES(LIBRARY_libopenocd PROPERTIES
                       OUTPUT_NAME "openocd")
 
 
-IF(0)
 #----------------------------------------------------------------------------
 #
 # Build a package for the selected platform.
@@ -71,9 +70,9 @@ IF(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
 	               ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
 	               @ONLY)
 
-	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/install/bin/openocd.exe
+	INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/external/openocd/install/bin/openocd.exe
 	        DESTINATION bin)
-	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/install/bin/openocd.dll
+	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openocd.dll
 	        DESTINATION bin)
 
 	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
@@ -85,16 +84,16 @@ ELSE(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
 	               ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
 	               @ONLY)
 
-	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/install/bin/openocd
+	INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/external/openocd/install/bin/openocd
+	        DESTINATION bin)
+	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openocd.so
 	        DESTINATION bin)
 
 	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
 	        DESTINATION .)
 ENDIF(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
 
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/install/cmake DESTINATION .)
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/install/include DESTINATION .)
-INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/install/lib DESTINATION .)
+INSTALL(FILES muhkuh_openocd.h DESTINATION include)
 
 
 CONFIGURE_FILE(installer/openocd.xml
@@ -126,4 +125,3 @@ SET(POM_PACKAGING    "tar.xz")
 CONFIGURE_FILE(installer/pom.xml
                ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}.pom
                @ONLY)
-ENDIF(0)

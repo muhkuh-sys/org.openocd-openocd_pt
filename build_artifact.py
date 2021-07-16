@@ -218,7 +218,7 @@ astrCmd.append(strCfg_projectFolder)
 subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
 
 astrCmd = [
-    strMake
-#    'pack'
+    strMake,
+    'pack'
 ]
 subprocess.check_call(' '.join(astrCmd), shell=True, cwd=strCfg_workingFolder, env=astrEnv)
