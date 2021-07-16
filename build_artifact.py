@@ -88,6 +88,7 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
 
             # Check for all system dependencies.
             astrDeb = [
+                'pkg-config',
                 'libudev-dev'
             ]
             install.install_host_debs(astrDeb)
@@ -99,6 +100,12 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
 
         elif tPlatform['cpu_architecture'] == 'arm64':
             # Build on linux for raspebrry.
+
+            # Check for all system dependencies.
+            astrDeb = [
+                'pkg-config'
+            ]
+            install.install_host_debs(astrDeb)
 
             # Install the build dependencies.
             astrDeb = [
@@ -127,6 +134,12 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
 
     elif tPlatform['distribution_id'] == 'windows':
         # Cross build on linux for windows.
+
+        # Check for all system dependencies.
+        astrDeb = [
+            'pkg-config'
+        ]
+        install.install_host_debs(astrDeb)
 
         if tPlatform['cpu_architecture'] == 'x86':
             # Build for 32bit windows.
