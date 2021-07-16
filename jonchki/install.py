@@ -12,7 +12,7 @@ def install_host_debs(astrDeb):
             "utf-8",
             "replace"
         )
-        print('Check for %s = %s' % (strDeb, strDpkgStatus))
+        print('Check for %s = %s' % (strDeb, strDpkgStatus), flush=True)
         if strDpkgStatus != 'install ok installed':
             astrInstall.append(strDeb)
     if len(astrInstall) != 0:
