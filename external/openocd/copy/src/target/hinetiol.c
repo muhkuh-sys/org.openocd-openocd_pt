@@ -535,7 +535,7 @@ int netiol_poll(struct target *target){
 				h_u32_to_le(alter_pc_next_buff, alter_pc_next);
 
 				netiol_write_memory(target,DEBUG_PC_NEXT_ADDR,BYTE_SIZE_32, 1,alter_pc_next_buff);
-				LOG_DEBUG("[hi][poll][corr-pc][bp]: 0x%08lx [length]: %d",p_breakpoint->address,p_breakpoint->length);
+				LOG_DEBUG("[hi][poll][corr-pc][bp]: 0x%08" PRIx64 " [length]: %d",p_breakpoint->address,p_breakpoint->length);
 				LOG_DEBUG("[hi][poll][corr-pc]: alter pc [from]:0x%08x [to]:0x%08x",pre_alter_pc_next, alter_pc_next);
 				LOG_DEBUG("[hi][poll][corr-pc][control prev inst]: 0x%08x !== 0x%08x (assert)",pre_alter_pc_previous, alter_pc_next );
 
@@ -595,10 +595,10 @@ int netiol_set_breakpoint(struct target *target, struct breakpoint *breakpoint){
 		}
 
 		breakpoint->set = true;
-		LOG_DEBUG("[hi][break][0x%08lx][set]: orig instr: %d(0x%08x)",breakpoint->address, breakpoint->length, orig_instruction);
+		LOG_DEBUG("[hi][break][0x%08" PRIx64 "][set]: orig instr: %d(0x%08x)",breakpoint->address, breakpoint->length, orig_instruction);
 
 	}else{
-		LOG_INFO("[hi][break][0x%08lx][set][err]: netIOL (zeroRiscy) only supports software breakpoints!",breakpoint->address);
+		LOG_INFO("[hi][break][0x%08" PRIx64 "][set][err]: netIOL (zeroRiscy) only supports software breakpoints!",breakpoint->address);
 		return ERROR_TARGET_RESOURCE_NOT_AVAILABLE;
 	}
 	return ERROR_OK;
@@ -623,9 +623,9 @@ int hi_netiol_remove_breakpoint(struct target *target,
 			orig_instr = le_to_h_u32(breakpoint->orig_instr);
 		}
 		breakpoint->set = false;
-		LOG_DEBUG("[hi][break][0x%08lx][remove]: removed BKPT_SOFT instr: (%d)0x%08x", breakpoint->address,breakpoint->length*8, orig_instr);
+		LOG_DEBUG("[hi][break][0x%08" PRIx64 "][remove]: removed BKPT_SOFT instr: (%d)0x%08x", breakpoint->address,breakpoint->length*8, orig_instr);
 	}else{
-		LOG_INFO("[hi][break][0x%08lx][remove][err]: netIOL (zeroRiscy) only supports software breakpoints!",breakpoint->address);
+		LOG_INFO("[hi][break][0x%08" PRIx64 "][remove][err]: netIOL (zeroRiscy) only supports software breakpoints!",breakpoint->address);
 		return ERROR_TARGET_RESOURCE_NOT_AVAILABLE;
 	}
 	return ERROR_OK;
