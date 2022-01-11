@@ -213,7 +213,7 @@ int muhkuh_openocd_get_result(void *pvContext, char *pcBuffer, size_t sizBufferM
 			pcResult = Jim_GetString(ptResultObj, &iResLen);
 
 			/* Does the result still exist? */
-			if( pcResult!=NULL && iResLen>0 )
+			if( pcResult!=NULL && iResLen>=0 )
 			{
 				/* The size of the result must be smaller and not equal because it must be terminated with a 0 byte. */
 				if( iResLen<sizBufferMax )
@@ -258,7 +258,7 @@ int muhkuh_openocd_get_result_alloc(void *pvContext, char **ppcBuffer, size_t *p
 			pcResult = Jim_GetString(ptResultObj, &iResLen);
 
 			/* Does the result still exist? */
-			if( pcResult!=NULL && iResLen>0 )
+			if( pcResult!=NULL && iResLen>=0 )
 			{
 				/* Allocate a new buffer for the result. Add 1 more byte for the terminating 0. */
 				pcBuffer = (char*)malloc(iResLen + 1);
