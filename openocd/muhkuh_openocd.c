@@ -97,7 +97,7 @@ int muhkuh_output_handler(struct command_context *ptContext, const char *pcLine)
 						sizUsed += sizLine;
 
 						/* Does the buffer hold a complete line now? */
-						if( pcLine[sizUsed-1]=='\n' )
+						if( pcBuffer[sizUsed-1]=='\n' )
 						{
 							pfnOutput(ptHandle->pvUser, pcBuffer, sizUsed-1);
 
@@ -703,7 +703,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 
 	/* Pass the pointer to parameters in register r0 on ARM, a0 on netIOL. */
 	memset(strCmd, 0, sizeof(strCmd));
-	
+
 	if (0==strcmp(pcTargetTypeName, "hinetiol"))
 	{
 		snprintf(strCmd, sizeof(strCmd)-1, "reg a0 0x%08X", ulR0);
@@ -723,7 +723,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 	else
 	{
 
-		/* Set the PC and then resume. 
+		/* Set the PC and then resume.
 		   Resume <address> does not work on target hinetiol. */
 		snprintf(strCmd, sizeof(strCmd)-1, "reg pc 0x%08X", ulNetxAddress);
 //		fprintf(stderr, "cmd: %s\n", strCmd);
