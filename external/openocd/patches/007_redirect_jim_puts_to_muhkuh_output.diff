@@ -1,0 +1,80 @@
+diff -uNr openocd-0.11.0/jimtcl/jim-aio.c openocd-0.11.0_patched/jimtcl/jim-aio.c
+--- openocd-0.11.0/jimtcl/jim-aio.c	2020-12-09 20:44:48.000000000 +0100
++++ openocd-0.11.0_patched/jimtcl/jim-aio.c	2022-03-09 22:30:32.040648374 +0100
+@@ -167,9 +167,28 @@
+     const JimAioFopsType *fops;
+ } AioFile;
+ 
++
++static PFN_JIM_AOI_OUTPUT_HANDLER_T s_pfnJimAoiOutputHandler;
++
++void jim_aoi_set_output_handler(PFN_JIM_AOI_OUTPUT_HANDLER_T pfnOutputHandler)
++{
++    s_pfnJimAoiOutputHandler = pfnOutputHandler;
++}
++
++
++
+ static int stdio_writer(struct AioFile *af, const char *buf, int len)
+ {
+-    return fwrite(buf, 1, len, af->fp);
++    int iRes;
++    FILE *fp = af->fp;
++
++    if( (fp==stdout) || (fp==stderr) ) {
++      s_pfnJimAoiOutputHandler(buf, len);
++      iRes = len;
++    } else {
++      iRes = fwrite(buf, 1, len, af->fp);
++    }
++    return iRes;
+ }
+ 
+ static int stdio_reader(struct AioFile *af, char *buf, int len)
+diff -uNr openocd-0.11.0/jimtcl/jim.c openocd-0.11.0_patched/jimtcl/jim.c
+--- openocd-0.11.0/jimtcl/jim.c	2020-12-09 20:44:48.000000000 +0100
++++ openocd-0.11.0_patched/jimtcl/jim.c	2022-03-09 22:22:57.794901965 +0100
+@@ -128,6 +128,13 @@
+  * Global variables
+  * ---------------------------------------------------------------------------*/
+ 
++static PFN_JIM_OUTPUT_HANDLER_T s_pfnJimOutputHandler;
++
++void jim_set_output_handler(PFN_JIM_OUTPUT_HANDLER_T pfnOutputHandler)
++{
++    s_pfnJimOutputHandler = pfnOutputHandler;
++}
++
+ /* A shared empty string for the objects string representation.
+  * Jim_InvalidateStringRep knows about it and doesn't try to free it. */
+ static char JimEmptyStringRep[] = "";
+@@ -11344,11 +11351,12 @@
+             return JIM_ERR;
+         }
+         else {
+-            fputs(Jim_String(argv[2]), stdout);
++            s_pfnJimOutputHandler(Jim_String(argv[2]));
+         }
+     }
+     else {
+-        puts(Jim_String(argv[1]));
++        s_pfnJimOutputHandler(Jim_String(argv[1]));
++        s_pfnJimOutputHandler("\n");
+     }
+     return JIM_OK;
+ }
+diff -uNr openocd-0.11.0/jimtcl/jim.h openocd-0.11.0_patched/jimtcl/jim.h
+--- openocd-0.11.0/jimtcl/jim.h	2020-12-09 20:44:48.000000000 +0100
++++ openocd-0.11.0_patched/jimtcl/jim.h	2022-03-09 22:27:07.671745496 +0100
+@@ -75,6 +75,11 @@
+ #include <stdlib.h> /* In order to export the Jim_Free() macro */
+ #include <stdarg.h> /* In order to get type va_list */
+ 
++typedef void (*PFN_JIM_OUTPUT_HANDLER_T) (const char *pcLine);
++typedef void (*PFN_JIM_AOI_OUTPUT_HANDLER_T) (const char *pcLine, size_t sizLine);
++void jim_set_output_handler(PFN_JIM_OUTPUT_HANDLER_T pfnOutputHandler);
++void jim_aoi_set_output_handler(PFN_JIM_AOI_OUTPUT_HANDLER_T pfnOutputHandler);
++
+ /* -----------------------------------------------------------------------------
+  * System configuration
+  * autoconf (configure) will set these

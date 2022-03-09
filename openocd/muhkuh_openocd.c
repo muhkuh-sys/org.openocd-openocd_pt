@@ -24,104 +24,114 @@ typedef struct MUHKUH_OUTPUT_BUFFER_STRUCT
 } MUHKUH_OUTPUT_BUFFER_T;
 
 
-int muhkuh_output_handler(struct command_context *ptContext, const char *pcLine)
+static MUHKUH_OUTPUT_BUFFER_T tMuhkuhOutputBuffer;
+
+
+void muhkuh_output_handler1(const char *pcLine, size_t sizLine)
 {
-	MUHKUH_OUTPUT_BUFFER_T *ptHandle;
 	size_t sizUsed;
 	size_t sizMax;
-	size_t sizLine;
 	size_t sizBufferNew;
 	char *pcBuffer;
 	char *pcBufferNew;
 	PFN_MUHKUH_OPENOCD_OUTPUT_HANDLER_T pfnOutput;
 
 
-	if( pcLine!=NULL )
+	if( pcLine!=NULL && sizLine>0 )
 	{
-		/* Is the handle valid? */
-		ptHandle = (MUHKUH_OUTPUT_BUFFER_T*)(ptContext->output_handler_priv);
-		if( ptHandle!=NULL && ptHandle->ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC && ptHandle->pfnOutput!=NULL )
+		/* Is the buffer valid? */
+		if( tMuhkuhOutputBuffer.ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC && tMuhkuhOutputBuffer.pfnOutput!=NULL )
 		{
-			pfnOutput = ptHandle->pfnOutput;
-			sizUsed = ptHandle->sizUsed;
-			sizMax = ptHandle->sizMax;
-			pcBuffer = ptHandle->pcBuffer;
+			pfnOutput = tMuhkuhOutputBuffer.pfnOutput;
+			sizUsed = tMuhkuhOutputBuffer.sizUsed;
+			sizMax = tMuhkuhOutputBuffer.sizMax;
+			pcBuffer = tMuhkuhOutputBuffer.pcBuffer;
 
-			/* Is data in the line? */
-			sizLine = strlen(pcLine);
-			if( sizLine>0 )
+			/* Can the line be printed as it is?
+			 * This is possible if...
+			 *  1) the line ends with a newline and
+			 *  2) the buffer is empty.
+			 */
+			if( pcLine[sizLine-1]=='\n' && sizUsed==0 )
 			{
-				/* Can the line be printed as it is?
-				 * This is possible if...
-				 *  1) the line ends with a newline and
-				 *  2) the buffer is empty.
-				 */
-				if( pcLine[sizLine-1]=='\n' && sizUsed==0 )
+				/* Just pass the line without the newline to the handler. */
+				pfnOutput(tMuhkuhOutputBuffer.pvUser, pcLine, sizLine-1);
+			}
+			else
+			{
+				/* Append the line to the buffer. */
+				sizBufferNew = sizUsed + sizLine;
+				/* Does a buffer already exist? */
+				if( sizMax==0 )
 				{
-					/* Just pass the line without the newline to the handler. */
-					pfnOutput(ptHandle->pvUser, pcLine, sizLine-1);
+					/* No -> allocate a new buffer. */
+					pcBufferNew = (char*)malloc(sizBufferNew);
 				}
 				else
 				{
-					/* Append the line to the buffer. */
-					sizBufferNew = sizUsed + sizLine;
-					/* Does a buffer already exist? */
-					if( sizMax==0 )
+					/* Does the combined data fit into the existing buffer? */
+					if( sizBufferNew<=sizMax )
 					{
-						/* No -> allocate a new buffer. */
-						pcBufferNew = (char*)malloc(sizBufferNew);
+						/* Yes -> keep the current buffer. */
+						pcBufferNew = pcBuffer;
+						sizBufferNew = sizMax;
 					}
 					else
 					{
-						/* Does the combined data fit into the existing buffer? */
-						if( sizBufferNew<=sizMax )
-						{
-							/* Yes -> keep the current buffer. */
-							pcBufferNew = pcBuffer;
-							sizBufferNew = sizMax;
-						}
-						else
-						{
-							/* No -> reallocate the buffer. */
-							pcBufferNew = (char*)realloc(pcBuffer, sizBufferNew);
-						}
+						/* No -> reallocate the buffer. */
+						pcBufferNew = (char*)realloc(pcBuffer, sizBufferNew);
 					}
-					if( pcBufferNew!=NULL )
+				}
+				if( pcBufferNew!=NULL )
+				{
+					/* Use the new buffer. */
+					pcBuffer = pcBufferNew;
+					sizMax = sizBufferNew;
+
+					/* Append the new data to the end of the buffer. */
+					memcpy(pcBuffer+sizUsed, pcLine, sizLine);
+					sizUsed += sizLine;
+
+					/* Does the buffer hold a complete line now? */
+					if( pcBuffer[sizUsed-1]=='\n' )
 					{
-						/* Use the new buffer. */
-						pcBuffer = pcBufferNew;
-						sizMax = sizBufferNew;
+						pfnOutput(tMuhkuhOutputBuffer.pvUser, pcBuffer, sizUsed-1);
 
-						/* Append the new data to the end of the buffer. */
-						memcpy(pcBuffer+sizUsed, pcLine, sizLine);
-						sizUsed += sizLine;
-
-						/* Does the buffer hold a complete line now? */
-						if( pcBuffer[sizUsed-1]=='\n' )
-						{
-							pfnOutput(ptHandle->pvUser, pcBuffer, sizUsed-1);
-
-							free(pcBuffer);
-							pcBuffer = NULL;
-							sizUsed = 0;
-							sizMax = 0;
-						}
-
-						/* Update the handle. */
-						ptHandle->sizUsed = sizUsed;
-						ptHandle->sizMax = sizMax;
-						ptHandle->pcBuffer = pcBuffer;
+						free(pcBuffer);
+						pcBuffer = NULL;
+						sizUsed = 0;
+						sizMax = 0;
 					}
+
+					/* Update the handle. */
+					tMuhkuhOutputBuffer.sizUsed = sizUsed;
+					tMuhkuhOutputBuffer.sizMax = sizMax;
+					tMuhkuhOutputBuffer.pcBuffer = pcBuffer;
 				}
 			}
 		}
 		else
 		{
 			/* No valid output handler found. Just print the data. */
-			LOG_USER_N("%s", pcLine);
+			fputs(pcLine, stderr);
 		}
 	}
+}
 
+
+void muhkuh_output_handler2(const char *pcLine)
+{
+	size_t sizLine;
+
+
+	sizLine = strlen(pcLine);
+	muhkuh_output_handler1(pcLine, sizLine);
+}
+
+
+int muhkuh_output_handler3(struct command_context *ptContext __attribute__ ((unused)), const char *pcLine)
+{
+	muhkuh_output_handler2(pcLine);
 	return ERROR_OK;
 }
 
@@ -132,51 +142,49 @@ void *muhkuh_openocd_init(const char *pcScriptSearchDir, PFN_MUHKUH_OPENOCD_OUTP
 	struct command_context *ptCmdCtx;
 	void *pvResult;
 	int iResult;
-	MUHKUH_OUTPUT_BUFFER_T *ptBuffer;
 
 
 	pvResult = NULL;
 
-	/* Allocate a new output buffer. */
-	ptBuffer = (MUHKUH_OUTPUT_BUFFER_T*)malloc(sizeof(MUHKUH_OUTPUT_BUFFER_T));
-	if( ptBuffer!=NULL )
-	{
-		ptBuffer->ulMagic = MUHKUH_OUTPUT_BUFFER_MAGIC;
-		ptBuffer->pfnOutput = pfnOutputHandler;
-		ptBuffer->pvUser = pvOutputHanderData;
-		ptBuffer->sizUsed = 0;
-		ptBuffer->sizMax = 0;
-		ptBuffer->pcBuffer = NULL;
+	tMuhkuhOutputBuffer.ulMagic = MUHKUH_OUTPUT_BUFFER_MAGIC;
+	tMuhkuhOutputBuffer.pfnOutput = pfnOutputHandler;
+	tMuhkuhOutputBuffer.pvUser = pvOutputHanderData;
+	tMuhkuhOutputBuffer.sizUsed = 0;
+	tMuhkuhOutputBuffer.sizMax = 0;
+	tMuhkuhOutputBuffer.pcBuffer = NULL;
 
-		ptCmdCtx = setup_command_handler(NULL);
-		if( ptCmdCtx!=NULL )
+	jim_aoi_set_output_handler(muhkuh_output_handler1);
+	log_set_output_handler(muhkuh_output_handler2);
+	jim_set_output_handler(muhkuh_output_handler2);
+
+	ptCmdCtx = setup_command_handler(NULL);
+	if( ptCmdCtx!=NULL )
+	{
+		iResult = util_init(ptCmdCtx);
+		if( iResult==ERROR_OK )
 		{
-			iResult = util_init(ptCmdCtx);
+			iResult = ioutil_init(ptCmdCtx);
 			if( iResult==ERROR_OK )
 			{
-				iResult = ioutil_init(ptCmdCtx);
+				iResult = rtt_init();
 				if( iResult==ERROR_OK )
 				{
-					iResult = rtt_init();
+					command_context_mode(ptCmdCtx, COMMAND_CONFIG);
+					command_set_output_handler(ptCmdCtx, muhkuh_output_handler3, NULL);
+
+					server_host_os_entry();
+
+					/* Add a search path to the interpreter. */
+					if( pcScriptSearchDir!=NULL )
+					{
+						add_script_search_dir(pcScriptSearchDir);
+					}
+
+					iResult = server_preinit();
 					if( iResult==ERROR_OK )
 					{
-						command_context_mode(ptCmdCtx, COMMAND_CONFIG);
-						command_set_output_handler(ptCmdCtx, muhkuh_output_handler, ptBuffer);
-
-						server_host_os_entry();
-
-						/* Add a search path to the interpreter. */
-						if( pcScriptSearchDir!=NULL )
-						{
-							add_script_search_dir(pcScriptSearchDir);
-						}
-
-						iResult = server_preinit();
-						if( iResult==ERROR_OK )
-						{
-							/* NOTE: do not call server_init. */
-							pvResult = ptCmdCtx;
-						}
+						/* NOTE: do not call server_init. */
+						pvResult = ptCmdCtx;
 					}
 				}
 			}
@@ -305,7 +313,6 @@ int muhkuh_openocd_command_run_line(void *pvContext, char *pcLine)
 void muhkuh_openocd_uninit(void *pvContext)
 {
 	struct command_context *ptCmdCtx;
-	MUHKUH_OUTPUT_BUFFER_T *ptHandle;
 
 
 	if( pvContext!=NULL )
@@ -329,21 +336,19 @@ void muhkuh_openocd_uninit(void *pvContext)
 		free_config();
 
 		/* Close the output handler. */
-		ptHandle = (MUHKUH_OUTPUT_BUFFER_T*)(ptCmdCtx->output_handler_priv);
 		command_set_output_handler(ptCmdCtx, NULL, NULL);
-		if( ptHandle!=NULL && ptHandle->ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC )
+		if( tMuhkuhOutputBuffer.ulMagic==MUHKUH_OUTPUT_BUFFER_MAGIC )
 		{
-			if( ptHandle->pcBuffer!=NULL )
+			if( tMuhkuhOutputBuffer.pcBuffer!=NULL )
 			{
 				/* Send any waiting data. */
-				if( ptHandle->pfnOutput!=NULL && ptHandle->sizUsed!=0 )
+				if( tMuhkuhOutputBuffer.pfnOutput!=NULL && tMuhkuhOutputBuffer.sizUsed!=0 )
 				{
-					ptHandle->pfnOutput(ptHandle->pvUser, ptHandle->pcBuffer, ptHandle->sizUsed);
+					tMuhkuhOutputBuffer.pfnOutput(tMuhkuhOutputBuffer.pvUser, tMuhkuhOutputBuffer.pcBuffer, tMuhkuhOutputBuffer.sizUsed);
 				}
 				/* Free the buffer. */
-				free(ptHandle->pcBuffer);
+				free(tMuhkuhOutputBuffer.pcBuffer);
 			}
-			free(ptHandle);
 		}
 	}
 }
