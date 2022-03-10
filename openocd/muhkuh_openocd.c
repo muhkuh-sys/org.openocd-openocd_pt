@@ -769,7 +769,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 //						fprintf(stderr, "call finished!\n");
 						iResult = 0;
 					}
-					else
+					else if( tState==TARGET_RUNNING )
 					{
 						/* Execute the Lua callback. */
 						fIsRunning = pfnCallback(pvCallbackUserData, tDccLineBuffer.pucDccData, tDccLineBuffer.ulDccDataSize);
@@ -792,7 +792,11 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 							target_call_timer_callbacks();
 						}
 					}
-				} while( tState!=TARGET_HALTED );
+					else
+					{
+						fprintf(stderr, "The target is in an unexpected state: %d . Assuming target trouble.\n", tState);
+					}
+				} while( tState==TARGET_RUNNING );
 
 				/* call timer callbacks once more (to get remaining DCC output), then call the callback to consume this output */
 				target_call_timer_callbacks();
