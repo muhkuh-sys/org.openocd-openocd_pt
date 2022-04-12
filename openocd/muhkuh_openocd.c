@@ -690,6 +690,7 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 	const char *pcTargetTypeName;
 	command_output_handler_t pfnOldOutputHandler;
 	void *pvOldOutputHandler;
+	int iUserCancel;
 
 	DCC_LINE_BUFFER_T tDccLineBuffer = {NULL, 0};
 
@@ -705,6 +706,8 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 
 	/* Expect failure. */
 	iResult = -1;
+	/* The operation was not canceled by the user. */
+	iUserCancel = 0;
 
 	/* Pass the pointer to parameters in register r0 on ARM, a0 on netIOL. */
 	memset(strCmd, 0, sizeof(strCmd));
@@ -767,7 +770,13 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 					if( tState==TARGET_HALTED )
 					{
 //						fprintf(stderr, "call finished!\n");
-						iResult = 0;
+						/* The target is halted now.
+						 * Set the result to "OK" if the target was not stopped by a user request.
+						 */
+						if( iUserCancel==0 )
+						{
+							iResult = 0;
+						}
 					}
 					else if( tState==TARGET_RUNNING )
 					{
@@ -775,7 +784,10 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 						fIsRunning = pfnCallback(pvCallbackUserData, tDccLineBuffer.pucDccData, tDccLineBuffer.ulDccDataSize);
 						dcc_line_buffer_clear(&tDccLineBuffer, 1);
 
-						if( fIsRunning==0 )
+						/* Try to halt the target if the callback function requests it.
+						 * But only try to halt the target once.
+						 */
+						if( fIsRunning==0 && iUserCancel==0 )
 						{
 							/* The operation was canceled, halt the target. */
 							fprintf(stderr, "Call canceled by the user, stopping target...\n");
@@ -784,13 +796,10 @@ int muhkuh_openocd_call(void *pvContext, uint32_t ulNetxAddress, uint32_t ulR0, 
 							{
 								fprintf(stderr, "Failed to halt target: %d\n", iOocdResult);
 							}
-							break;
+							iUserCancel = 1;
 						}
-						else
-						{
-							/* call OpenOCD timer callbacks */
-							target_call_timer_callbacks();
-						}
+						/* call OpenOCD timer callbacks */
+						target_call_timer_callbacks();
 					}
 					else
 					{
