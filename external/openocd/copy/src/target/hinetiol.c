@@ -749,10 +749,11 @@ int hi_net_iol_step(struct target *target, int current, target_addr_t address, i
 	// and the next breakpoint is at ...
 	uint32_t pre_step_pc_next = le_to_h_u32(buff_pc_old);
 
-		// check for breakpoint check
-	if (handle_breakpoints)
+	// check for breakpoint check
+	if (handle_breakpoints) {
 		LOG_DEBUG("[hi][step][bp]: check for brakpoint at pc: 0x%08x",pre_step_pc_next);
 		p_breakpoint = breakpoint_find(target, pre_step_pc_next);
+	}
 	if (p_breakpoint != NULL) {
 		/**
 		 * netIOL only supports SW-Breakpoints, so breakpoint type is noch checked.
@@ -890,10 +891,6 @@ int hi_net_iol_step(struct target *target, int current, target_addr_t address, i
  */
 
 #define DIM(x)		(sizeof(x)/sizeof(*x))
-
-struct {
-	uint16_t low, high;
-} *expose_csr;
 
 struct csr_info {
 	unsigned number;
