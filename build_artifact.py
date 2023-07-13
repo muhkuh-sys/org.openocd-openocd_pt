@@ -2,7 +2,6 @@
 
 from jonchki import cli_args
 from jonchki import install
-from jonchki import jonchkihere
 
 import glob
 import os
@@ -29,46 +28,9 @@ strCfg_workingFolder = os.path.join(
     tPlatform['platform_id']
 )
 
-# Where is the jonchkihere tool?
-strCfg_jonchkiHerePath = os.path.join(
-    strCfg_projectFolder,
-    'jonchki'
-)
-# This is the Jonchki version to use.
-strCfg_jonchkiVersion = '0.0.7.1'
-# Look in this folder for Jonchki archives before downloading them.
-strCfg_jonchkiLocalArchives = os.path.join(
-    strCfg_projectFolder,
-    'jonchki',
-    'local_archives'
-)
-# The target folder for the jonchki installation. A subfolder named
-# "jonchki-VERSION" will be created there. "VERSION" will be replaced with
-# the version number from strCfg_jonchkiVersion.
-strCfg_jonchkiInstallationFolder = os.path.join(
-    strCfg_projectFolder,
-    'build'
-)
-
-# Select the verbose level for jonchki.
-# Possible values are "debug", "info", "warning", "error" and "fatal".
-strCfg_jonchkiVerbose = 'info'
-
-strCfg_jonchkiSystemConfiguration = os.path.join(
-    strCfg_projectFolder,
-    'jonchki',
-    'jonchkisys.cfg'
-)
-strCfg_jonchkiProjectConfiguration = os.path.join(
-    strCfg_projectFolder,
-    'jonchki',
-    'jonchkicfg.xml'
-)
 
 # -
 # --------------------------------------------------------------------------
-
-print(tPlatform)
 
 astrCMAKE_COMPILER = None
 astrCMAKE_PLATFORM = None
