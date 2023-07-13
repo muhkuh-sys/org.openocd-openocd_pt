@@ -124,49 +124,35 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
             ]
             strMake = 'make'
 
-        else:
-            raise Exception('Unknown CPU architecture: "%s"' % tPlatform['cpu_architecture'])
+        elif tPlatform['cpu_architecture'] == 'riscv64':
+            # Build on linux for riscv64.
 
-    elif tPlatform['distribution_id'] == 'windows':
-        # Cross build on linux for windows.
+            # Check for all system dependencies.
+            astrDeb = [
+                'dpkg-dev',
+                'pkg-config'
+            ]
+            install.install_host_debs(astrDeb)
 
-        # Check for all system dependencies.
-        astrDeb = [
-            'pkg-config'
-        ]
-        install.install_host_debs(astrDeb)
+            # Install the build dependencies.
+            astrDeb = [
+                'libudev-dev:riscv64'
+            ]
+            install.install_foreign_debs(astrDeb, strCfg_workingFolder, strCfg_projectFolder)
 
-        if tPlatform['cpu_architecture'] == 'x86':
-            # Build for 32bit windows.
             astrCMAKE_COMPILER = [
-                '-DCMAKE_TOOLCHAIN_FILE=%s/cmake/toolchainfiles/toolchain_windows_32.cmake' % strCfg_projectFolder
+                '-DCMAKE_TOOLCHAIN_FILE=%s/cmake/toolchainfiles/toolchain_ubuntu_riscv64.cmake' % strCfg_projectFolder
             ]
             astrCMAKE_PLATFORM = [
-                '-DJONCHKI_PLATFORM_DIST_ID=windows',
-                '-DJONCHKI_PLATFORM_DIST_VERSION=""',
-                '-DJONCHKI_PLATFORM_CPU_ARCH=x86'
+                '-DJONCHKI_PLATFORM_DIST_ID=%s' % tPlatform['distribution_id'],
+                '-DJONCHKI_PLATFORM_DIST_VERSION=%s' % tPlatform['distribution_version'],
+                '-DJONCHKI_PLATFORM_CPU_ARCH=%s' % tPlatform['cpu_architecture']
             ]
-            astrJONCHKI_SYSTEM = [
-                '--distribution-id windows',
-                '--empty-distribution-version',
-                '--cpu-architecture x86'
-            ]
-            strMake = 'make'
 
-        elif tPlatform['cpu_architecture'] == 'x86_64':
-            # Build for 64bit windows.
-            astrCMAKE_COMPILER = [
-                '-DCMAKE_TOOLCHAIN_FILE=%s/cmake/toolchainfiles/toolchain_windows_64.cmake' % strCfg_projectFolder
-            ]
-            astrCMAKE_PLATFORM = [
-                '-DJONCHKI_PLATFORM_DIST_ID=windows',
-                '-DJONCHKI_PLATFORM_DIST_VERSION=""',
-                '-DJONCHKI_PLATFORM_CPU_ARCH=x86_64'
-            ]
             astrJONCHKI_SYSTEM = [
-                '--distribution-id windows',
-                '--empty-distribution-version',
-                '--cpu-architecture x86_64'
+                '--distribution-id %s' % tPlatform['distribution_id'],
+                '--distribution-version %s' % tPlatform['distribution_version'],
+                '--cpu-architecture %s' % tPlatform['cpu_architecture']
             ]
             strMake = 'make'
 
