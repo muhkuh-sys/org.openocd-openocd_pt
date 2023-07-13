@@ -64,35 +64,19 @@ SET(CPACK_PACKAGE_FILE_NAME "openocd-${PROJECT_VERSION}-${JONCHKI_PLATFORM}")
 SET(CPACK_GENERATOR "TXZ")
 INCLUDE(CPack)
 
-IF(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
-	# Package a windows build.
+# Package a linux build.
 
-	CONFIGURE_FILE(installer/install_windows.lua
-	               ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
-	               @ONLY)
+CONFIGURE_FILE(installer/install_linux.lua
+               ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
+               @ONLY)
 
-	INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/external/openocd/install/bin/openocd.exe
-	        DESTINATION bin)
-	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openocd.dll
-	        DESTINATION bin)
+INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/external/openocd/install/bin/openocd
+        DESTINATION bin)
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openocd.so
+        DESTINATION bin)
 
-	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
-	        DESTINATION .)
-ELSE(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
-	# Package a linux build.
-
-	CONFIGURE_FILE(installer/install_linux.lua
-	               ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
-	               @ONLY)
-
-	INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/external/openocd/install/bin/openocd
-	        DESTINATION bin)
-	INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openocd.so
-	        DESTINATION bin)
-
-	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
-	        DESTINATION .)
-ENDIF(${JONCHKI_PLATFORM_DIST_ID} STREQUAL "windows")
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/install.lua
+        DESTINATION .)
 
 INSTALL(FILES muhkuh_openocd.h DESTINATION include)
 
