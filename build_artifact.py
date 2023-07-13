@@ -61,7 +61,7 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
             strMake = 'make'
 
         elif tPlatform['cpu_architecture'] == 'armhf':
-            # Build on linux for raspebrry.
+            # Build on linux for raspberry.
 
             # Check for all system dependencies.
             astrDeb = [
@@ -93,7 +93,7 @@ if tPlatform['host_distribution_id'] == 'ubuntu':
             strMake = 'make'
 
         elif tPlatform['cpu_architecture'] == 'arm64':
-            # Build on linux for raspebrry.
+            # Build on linux for raspberry.
 
             # Check for all system dependencies.
             astrDeb = [
