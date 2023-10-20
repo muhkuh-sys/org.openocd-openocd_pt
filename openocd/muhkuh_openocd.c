@@ -315,6 +315,8 @@ void muhkuh_openocd_uninit(void *pvContext)
 	{
 		ptCmdCtx = (struct command_context *)pvContext;
 
+		target_quit();
+
 		flash_free_all_banks();
 		gdb_service_free();
 		arm_tpiu_swo_cleanup_all();
