@@ -315,11 +315,17 @@ void muhkuh_openocd_uninit(void *pvContext)
 	{
 		ptCmdCtx = (struct command_context *)pvContext;
 
+		flash_free_all_banks();
+		gdb_service_free();
+		arm_tpiu_swo_cleanup_all();
+		server_free();
+
 		unregister_all_commands(ptCmdCtx, NULL);
+		help_del_all_commands(ptCmdCtx);
 
 		/* free all DAP and CTI objects */
-		dap_cleanup_all();
 		arm_cti_cleanup_all();
+		dap_cleanup_all();
 
 		adapter_quit();
 
@@ -346,6 +352,8 @@ void muhkuh_openocd_uninit(void *pvContext)
 				free(tMuhkuhOutputBuffer.pcBuffer);
 			}
 		}
+
+		log_exit();
 	}
 }
 
