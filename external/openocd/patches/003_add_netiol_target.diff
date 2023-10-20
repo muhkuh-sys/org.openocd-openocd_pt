@@ -1,43 +1,25 @@
-diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
---- openocd-0.11.0/Makefile.in	2021-03-07 12:02:20.000000000 +0100
-+++ openocd-0.11.0_patched/Makefile.in	2021-03-18 23:10:58.569950314 +0100
-@@ -634,6 +634,7 @@
- 	src/target/a64_disassembler.c src/target/armv8.c \
- 	src/target/armv8_cache.c src/target/mips64.c \
- 	src/target/mips64_pracc.c src/target/mips_mips64.c \
-+	src/target/hiahbl.c src/target/hinetiol.c \
- 	src/target/algorithm.h src/target/arm.h src/target/arm_dpm.h \
- 	src/target/arm_jtag.h src/target/arm_adi_v5.h \
- 	src/target/armv7a_cache.h src/target/armv7a_cache_l2x.h \
-@@ -676,7 +677,8 @@
- 	src/target/esirisc.h src/target/esirisc_jtag.h \
- 	src/target/esirisc_regs.h src/target/esirisc_trace.h \
- 	src/target/arc.h src/target/arc_cmd.h src/target/arc_jtag.h \
--	src/target/arc_mem.h src/target/rtt.h
-+	src/target/arc_mem.h src/target/rtt.h src/target/hiahbl.h \
-+	src/target/hinetiol.h
- am__objects_53 = src/target/libtarget_la-algorithm.lo \
- 	src/target/libtarget_la-register.lo \
- 	src/target/libtarget_la-image.lo \
-@@ -772,6 +774,8 @@
+diff -uNr openocd-0.12.0/Makefile.in openocd-0.12.0_patched/Makefile.in
+--- openocd-0.12.0/Makefile.in	2023-01-14 21:32:45.000000000 +0100
++++ openocd-0.12.0_patched/Makefile.in	2023-10-20 11:44:12.535507417 +0200
+@@ -664,6 +664,8 @@
  	src/target/libtarget_la-mips_mips64.lo \
  	src/target/libtarget_la-trace.lo \
  	src/target/libtarget_la-mips_ejtag.lo
-+am__objects_70 = src/target/libtarget_la-hiahbl.lo \
++am__objects_66 = src/target/libtarget_la-hiahbl.lo \
 +	src/target/libtarget_la-hinetiol.lo
- am_src_target_libtarget_la_OBJECTS = $(am__objects_53) \
- 	$(am__objects_55) $(am__objects_57) $(am__objects_58) \
- 	$(am__objects_59) $(am__objects_60) $(am__objects_61) \
-@@ -782,7 +786,7 @@
+ am_src_target_libtarget_la_OBJECTS = $(am__objects_50) \
+ 	$(am__objects_51) $(am__objects_53) $(am__objects_54) \
+ 	$(am__objects_55) $(am__objects_56) $(am__objects_57) \
+@@ -674,7 +676,7 @@
  	src/target/libtarget_la-dsp563xx_once.lo \
  	src/target/libtarget_la-dsp5680xx.lo \
- 	src/target/libtarget_la-hla_target.lo $(am__objects_68) \
--	$(am__objects_69)
-+	$(am__objects_69) $(am__objects_70)
+ 	src/target/libtarget_la-hla_target.lo $(am__objects_64) \
+-	$(am__objects_65)
++	$(am__objects_65) $(am__objects_66)
  src_target_libtarget_la_OBJECTS =  \
  	$(am_src_target_libtarget_la_OBJECTS)
  src_target_openrisc_libopenrisc_la_LIBADD =
-@@ -1094,6 +1098,8 @@
+@@ -988,6 +990,8 @@
  	src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo \
  	src/target/$(DEPDIR)/libtarget_la-fa526.Plo \
  	src/target/$(DEPDIR)/libtarget_la-feroceon.Plo \
@@ -46,28 +28,26 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  	src/target/$(DEPDIR)/libtarget_la-hla_target.Plo \
  	src/target/$(DEPDIR)/libtarget_la-image.Plo \
  	src/target/$(DEPDIR)/libtarget_la-lakemont.Plo \
-@@ -1763,8 +1769,8 @@
+@@ -1684,7 +1688,7 @@
  	$(INTEL_IA32_SRC) $(ESIRISC_SRC) $(ARC_SRC) src/target/avrt.c \
  	src/target/dsp563xx.c src/target/dsp563xx_once.c \
  	src/target/dsp5680xx.c src/target/hla_target.c $(ARMV8_SRC) \
 -	$(MIPS64_SRC) src/target/algorithm.h src/target/arm.h \
--	src/target/arm_dpm.h src/target/arm_jtag.h \
-+	$(MIPS64_SRC) $(NETIOL_SRC) src/target/algorithm.h \
-+	src/target/arm.h src/target/arm_dpm.h src/target/arm_jtag.h \
- 	src/target/arm_adi_v5.h src/target/armv7a_cache.h \
- 	src/target/armv7a_cache_l2x.h src/target/armv7a_mmu.h \
- 	src/target/arm_disassembler.h src/target/a64_disassembler.h \
-@@ -1806,7 +1812,8 @@
- 	src/target/esirisc.h src/target/esirisc_jtag.h \
- 	src/target/esirisc_regs.h src/target/esirisc_trace.h \
- 	src/target/arc.h src/target/arc_cmd.h src/target/arc_jtag.h \
++	$(MIPS64_SRC) $(NETIOL_SRC) src/target/algorithm.h src/target/arm.h \
+ 	src/target/arm_coresight.h src/target/arm_dpm.h \
+ 	src/target/arm_jtag.h src/target/arm_adi_v5.h \
+ 	src/target/armv7a_cache.h src/target/armv7a_cache_l2x.h \
+@@ -1728,7 +1732,8 @@
+ 	src/target/esirisc_jtag.h src/target/esirisc_regs.h \
+ 	src/target/esirisc_trace.h src/target/arc.h \
+ 	src/target/arc_cmd.h src/target/arc_jtag.h \
 -	src/target/arc_mem.h src/target/rtt.h
 +	src/target/arc_mem.h src/target/rtt.h src/target/hiahbl.h \
 +	src/target/hinetiol.h
  TARGET_CORE_SRC = \
  	src/target/algorithm.c \
  	src/target/register.c \
-@@ -1936,6 +1943,10 @@
+@@ -1858,6 +1863,10 @@
          src/target/arc_jtag.c \
          src/target/arc_mem.c
  
@@ -78,7 +58,7 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  src_target_openrisc_libopenrisc_la_SOURCES = \
  	src/target/openrisc/or1k.c \
  	src/target/openrisc/or1k_du_adv.c \
-@@ -3128,6 +3139,10 @@
+@@ -3092,6 +3101,10 @@
  	src/target/$(DEPDIR)/$(am__dirstamp)
  src/target/libtarget_la-mips_mips64.lo: src/target/$(am__dirstamp) \
  	src/target/$(DEPDIR)/$(am__dirstamp)
@@ -89,7 +69,7 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  
  src/target/libtarget.la: $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_DEPENDENCIES) $(EXTRA_src_target_libtarget_la_DEPENDENCIES) src/target/$(am__dirstamp)
  	$(AM_V_CCLD)$(LINK)  $(src_target_libtarget_la_OBJECTS) $(src_target_libtarget_la_LIBADD) $(LIBS)
-@@ -3535,6 +3550,8 @@
+@@ -3517,6 +3530,8 @@
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-fa526.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-feroceon.Plo@am__quote@ # am--include-marker
@@ -98,7 +78,7 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-hla_target.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-image.Plo@am__quote@ # am--include-marker
  @AMDEP_TRUE@@am__include@ @am__quote@src/target/$(DEPDIR)/libtarget_la-lakemont.Plo@am__quote@ # am--include-marker
-@@ -5003,6 +5020,20 @@
+@@ -4721,6 +4736,20 @@
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(src_target_libtarget_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/target/libtarget_la-mips_mips64.lo `test -f 'src/target/mips_mips64.c' || echo '$(srcdir)/'`src/target/mips_mips64.c
  
@@ -119,7 +99,7 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  mostlyclean-libtool:
  	-rm -f *.lo
  
-@@ -5958,6 +5989,8 @@
+@@ -5685,6 +5714,8 @@
  	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
@@ -128,7 +108,7 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
-@@ -6423,6 +6456,8 @@
+@@ -6161,6 +6192,8 @@
  	-rm -f src/target/$(DEPDIR)/libtarget_la-etm_dummy.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-fa526.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-feroceon.Plo
@@ -137,10 +117,10 @@ diff -uNr openocd-0.11.0/Makefile.in openocd-0.11.0_patched/Makefile.in
  	-rm -f src/target/$(DEPDIR)/libtarget_la-hla_target.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-image.Plo
  	-rm -f src/target/$(DEPDIR)/libtarget_la-lakemont.Plo
-diff -uNr openocd-0.11.0/src/target/Makefile.am openocd-0.11.0_patched/src/target/Makefile.am
---- openocd-0.11.0/src/target/Makefile.am	2020-12-09 20:43:09.000000000 +0100
-+++ openocd-0.11.0_patched/src/target/Makefile.am	2021-03-18 23:10:58.569950314 +0100
-@@ -32,7 +32,8 @@
+diff -uNr openocd-0.12.0/src/target/Makefile.am openocd-0.12.0_patched/src/target/Makefile.am
+--- openocd-0.12.0/src/target/Makefile.am	2022-09-18 15:46:16.000000000 +0200
++++ openocd-0.12.0_patched/src/target/Makefile.am	2023-10-20 11:44:12.535507417 +0200
+@@ -30,7 +30,8 @@
  	%D%/dsp5680xx.c \
  	%D%/hla_target.c \
  	$(ARMV8_SRC) \
@@ -150,7 +130,7 @@ diff -uNr openocd-0.11.0/src/target/Makefile.am openocd-0.11.0_patched/src/targe
  
  if HAVE_CAPSTONE
  %C%_libtarget_la_CPPFLAGS += $(CAPSTONE_CFLAGS)
-@@ -168,6 +169,10 @@
+@@ -166,6 +167,10 @@
          %D%/arc_jtag.c \
          %D%/arc_mem.c
  
@@ -161,7 +141,7 @@ diff -uNr openocd-0.11.0/src/target/Makefile.am openocd-0.11.0_patched/src/targe
  %C%_libtarget_la_SOURCES += \
  	%D%/algorithm.h \
  	%D%/arm.h \
-@@ -261,7 +266,9 @@
+@@ -260,7 +265,10 @@
  	%D%/arc_cmd.h \
  	%D%/arc_jtag.h \
  	%D%/arc_mem.h \
@@ -169,13 +149,47 @@ diff -uNr openocd-0.11.0/src/target/Makefile.am openocd-0.11.0_patched/src/targe
 +	%D%/rtt.h \
 +	%D%/hiahbl.h \
 +	%D%/hinetiol.h
++
  
  include %D%/openrisc/Makefile.am
  include %D%/riscv/Makefile.am
-diff -uNr openocd-0.11.0/src/target/target.c openocd-0.11.0_patched/src/target/target.c
---- openocd-0.11.0/src/target/target.c	2021-03-07 11:32:52.000000000 +0100
-+++ openocd-0.11.0_patched/src/target/target.c	2021-03-18 23:10:58.569950314 +0100
-@@ -110,6 +110,7 @@
+diff -uNr openocd-0.12.0/src/target/riscv/riscv.c openocd-0.12.0_patched/src/target/riscv/riscv.c
+--- openocd-0.12.0/src/target/riscv/riscv.c	2022-10-25 17:15:57.000000000 +0200
++++ openocd-0.12.0_patched/src/target/riscv/riscv.c	2023-10-20 11:26:22.000000000 +0200
+@@ -257,7 +257,6 @@
+ };
+ 
+ static enum riscv_halt_reason riscv_halt_reason(struct target *target, int hartid);
+-static void riscv_info_init(struct target *target, struct riscv_info *r);
+ static void riscv_invalidate_register_cache(struct target *target);
+ static int riscv_step_rtos_hart(struct target *target);
+ 
+@@ -3203,7 +3202,7 @@
+ /*** RISC-V Interface ***/
+ 
+ /* Initializes the shared RISC-V structure. */
+-static void riscv_info_init(struct target *target, struct riscv_info *r)
++void riscv_info_init(struct target *target, struct riscv_info *r)
+ {
+ 	memset(r, 0, sizeof(*r));
+ 
+diff -uNr openocd-0.12.0/src/target/riscv/riscv.h openocd-0.12.0_patched/src/target/riscv/riscv.h
+--- openocd-0.12.0/src/target/riscv/riscv.h	2022-09-18 15:46:16.000000000 +0200
++++ openocd-0.12.0_patched/src/target/riscv/riscv.h	2023-10-20 11:25:53.000000000 +0200
+@@ -307,6 +307,9 @@
+ 
+ /*** RISC-V Interface ***/
+ 
++/* Initializes the shared RISC-V structure. */
++void riscv_info_init(struct target *target, struct riscv_info *r);
++
+ bool riscv_supports_extension(struct target *target, char letter);
+ 
+ /* Returns XLEN for the given (or current) hart. */
+diff -uNr openocd-0.12.0/src/target/target.c openocd-0.12.0_patched/src/target/target.c
+--- openocd-0.12.0/src/target/target.c	2022-12-20 11:45:19.000000000 +0100
++++ openocd-0.12.0_patched/src/target/target.c	2023-10-20 11:44:12.539507419 +0200
+@@ -106,6 +106,7 @@
  extern struct target_type mem_ap_target;
  extern struct target_type esirisc_target;
  extern struct target_type arcv2_target;

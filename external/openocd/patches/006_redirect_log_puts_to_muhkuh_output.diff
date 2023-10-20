@@ -1,7 +1,7 @@
-diff -uNr openocd-0.11.0/src/helper/log.c openocd-0.11.0_patched/src/helper/log.c
---- openocd-0.11.0/src/helper/log.c	2020-12-09 20:43:09.000000000 +0100
-+++ openocd-0.11.0_patched/src/helper/log.c	2022-03-09 21:31:00.472541138 +0100
-@@ -40,6 +40,15 @@
+diff -uNr openocd-0.12.0/src/helper/log.c openocd-0.12.0_patched/src/helper/log.c
+--- openocd-0.12.0/src/helper/log.c	2023-10-20 09:53:07.458533862 +0200
++++ openocd-0.12.0_patched/src/helper/log.c	2023-10-20 09:56:35.814516345 +0200
+@@ -31,6 +31,15 @@
  #endif
  #endif
  
@@ -17,7 +17,7 @@ diff -uNr openocd-0.11.0/src/helper/log.c openocd-0.11.0_patched/src/helper/log.
  int debug_level = LOG_LVL_INFO;
  
  static FILE *log_output;
-@@ -50,30 +59,8 @@
+@@ -40,30 +49,8 @@
  
  static int64_t start;
  
@@ -48,7 +48,7 @@ diff -uNr openocd-0.11.0/src/helper/log.c openocd-0.11.0_patched/src/helper/log.
  /* The log_puts() serves two somewhat different goals:
   *
   * - logging
-@@ -84,65 +71,13 @@
+@@ -74,60 +61,13 @@
   * target_request.c).
   *
   */
@@ -79,35 +79,30 @@ diff -uNr openocd-0.11.0/src/helper/log.c openocd-0.11.0_patched/src/helper/log.
 -	}
 -
 -	f = strrchr(file, '/');
--	if (f != NULL)
+-	if (f)
 -		file = f + 1;
 -
--	if (strlen(string) > 0) {
--		if (debug_level >= LOG_LVL_DEBUG) {
--			/* print with count and time information */
--			int64_t t = timeval_ms() - start;
+-	if (debug_level >= LOG_LVL_DEBUG) {
+-		/* print with count and time information */
+-		int64_t t = timeval_ms() - start;
 -#ifdef _DEBUG_FREE_SPACE_
--			struct mallinfo info;
--			info = mallinfo();
+-		struct mallinfo info;
+-		info = mallinfo();
 -#endif
--			fprintf(log_output, "%s%d %" PRId64 " %s:%d %s()"
+-		fprintf(log_output, "%s%d %" PRId64 " %s:%d %s()"
 -#ifdef _DEBUG_FREE_SPACE_
--				" %d"
+-			" %d"
 -#endif
--				": %s", log_strings[level + 1], count, t, file, line, function,
+-			": %s", log_strings[level + 1], count, t, file, line, function,
 -#ifdef _DEBUG_FREE_SPACE_
--				info.fordblks,
+-			info.fordblks,
 -#endif
--				string);
--		} else {
--			/* if we are using gdb through pipes then we do not want any output
--			 * to the pipe otherwise we get repeated strings */
--			fprintf(log_output, "%s%s",
--				(level > LOG_LVL_USER) ? log_strings[level + 1] : "", string);
--		}
+-			string);
 -	} else {
--		/* Empty strings are sent to log callbacks to keep e.g. gdbserver alive, here we do
--		 *nothing. */
+-		/* if we are using gdb through pipes then we do not want any output
+-		 * to the pipe otherwise we get repeated strings */
+-		fprintf(log_output, "%s%s",
+-			(level > LOG_LVL_USER) ? log_strings[level + 1] : "", string);
 -	}
 -
 -	fflush(log_output);
@@ -119,10 +114,10 @@ diff -uNr openocd-0.11.0/src/helper/log.c openocd-0.11.0_patched/src/helper/log.
  }
  
  void log_printf(enum log_levels level,
-diff -uNr openocd-0.11.0/src/helper/log.h openocd-0.11.0_patched/src/helper/log.h
---- openocd-0.11.0/src/helper/log.h	2020-12-09 20:43:09.000000000 +0100
-+++ openocd-0.11.0_patched/src/helper/log.h	2022-03-09 21:30:53.316599237 +0100
-@@ -25,6 +25,11 @@
+diff -uNr openocd-0.12.0/src/helper/log.h openocd-0.12.0_patched/src/helper/log.h
+--- openocd-0.12.0/src/helper/log.h	2023-10-20 09:53:07.458533862 +0200
++++ openocd-0.12.0_patched/src/helper/log.h	2023-10-20 09:56:54.170513271 +0200
+@@ -14,6 +14,11 @@
  #ifndef OPENOCD_HELPER_LOG_H
  #define OPENOCD_HELPER_LOG_H
  

@@ -163,29 +163,25 @@ void *muhkuh_openocd_init(const char *pcScriptSearchDir, PFN_MUHKUH_OPENOCD_OUTP
 		iResult = util_init(ptCmdCtx);
 		if( iResult==ERROR_OK )
 		{
-			iResult = ioutil_init(ptCmdCtx);
+			iResult = rtt_init();
 			if( iResult==ERROR_OK )
 			{
-				iResult = rtt_init();
+				command_context_mode(ptCmdCtx, COMMAND_CONFIG);
+				command_set_output_handler(ptCmdCtx, muhkuh_output_handler3, NULL);
+
+				server_host_os_entry();
+
+				/* Add a search path to the interpreter. */
+				if( pcScriptSearchDir!=NULL )
+				{
+					add_script_search_dir(pcScriptSearchDir);
+				}
+
+				iResult = server_preinit();
 				if( iResult==ERROR_OK )
 				{
-					command_context_mode(ptCmdCtx, COMMAND_CONFIG);
-					command_set_output_handler(ptCmdCtx, muhkuh_output_handler3, NULL);
-
-					server_host_os_entry();
-
-					/* Add a search path to the interpreter. */
-					if( pcScriptSearchDir!=NULL )
-					{
-						add_script_search_dir(pcScriptSearchDir);
-					}
-
-					iResult = server_preinit();
-					if( iResult==ERROR_OK )
-					{
-						/* NOTE: do not call server_init. */
-						pvResult = ptCmdCtx;
-					}
+					/* NOTE: do not call server_init. */
+					pvResult = ptCmdCtx;
 				}
 			}
 		}

@@ -1,6 +1,6 @@
-diff -uNr openocd-0.11.0-rc2/jimtcl/jim-exec.c openocd-0.11.0-rc2_patched/jimtcl/jim-exec.c
---- openocd-0.11.0-rc2/jimtcl/jim-exec.c	2020-12-09 20:44:48.000000000 +0100
-+++ openocd-0.11.0-rc2_patched/jimtcl/jim-exec.c	2021-02-23 15:26:42.751234850 +0100
+diff -uNr openocd-0.12.0/jimtcl/jim-exec.c openocd-0.12.0_patched/jimtcl/jim-exec.c
+--- openocd-0.12.0/jimtcl/jim-exec.c	2022-09-18 15:57:26.000000000 +0200
++++ openocd-0.12.0_patched/jimtcl/jim-exec.c	2023-10-20 08:56:26.949363604 +0200
 @@ -23,6 +23,7 @@
  #ifndef _GNU_SOURCE
  #define _GNU_SOURCE
@@ -9,7 +9,7 @@ diff -uNr openocd-0.11.0-rc2/jimtcl/jim-exec.c openocd-0.11.0-rc2_patched/jimtcl
  #include <string.h>
  #include <ctype.h>
  
-@@ -238,12 +239,12 @@
+@@ -236,12 +237,12 @@
  
      if (pid == JIM_BAD_PID || pid == JIM_NO_PID) {
          Jim_ListAppendElement(interp, errorCode, Jim_NewStringObj(interp, "NONE", -1));
@@ -24,7 +24,7 @@ diff -uNr openocd-0.11.0-rc2/jimtcl/jim-exec.c openocd-0.11.0-rc2_patched/jimtcl
          Jim_ListAppendElement(interp, errorCode, Jim_NewIntObj(interp, WEXITSTATUS(waitStatus)));
      }
      else {
-@@ -271,7 +272,7 @@
+@@ -269,7 +270,7 @@
              Jim_AppendStrings(interp, errStrObj, "child ", action, " by signal ", Jim_SignalId(WTERMSIG(waitStatus)), "\n", NULL);
          }
  
@@ -33,7 +33,7 @@ diff -uNr openocd-0.11.0-rc2/jimtcl/jim-exec.c openocd-0.11.0-rc2_patched/jimtcl
          Jim_ListAppendElement(interp, errorCode, Jim_NewStringObj(interp, signame, -1));
      }
      return errorCode;
-@@ -400,7 +401,7 @@
+@@ -398,7 +399,7 @@
          /* The return value is a list of the pids */
          listObj = Jim_NewListObj(interp, NULL, 0);
          for (i = 0; i < numPids; i++) {

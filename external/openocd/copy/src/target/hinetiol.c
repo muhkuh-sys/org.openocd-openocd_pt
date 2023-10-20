@@ -24,7 +24,7 @@
 
 #include "target/riscv/debug_defines.h"
 #include "target/riscv/riscv.h"
-#include "command.h" // in original file it's not here, where does it come from?
+#include "helper/command.h"
 
 #define TARGET_NAME "hinetiol"
 
@@ -392,20 +392,21 @@ int netiol_init_target(struct command_context *cmd_ctx, struct target *target){
 	LOG_USER("[hi][init][version]: %s",IOL_INTERNAL_VERSION);
 
 	// this alocated struct will manage te registers
-		LOG_DEBUG("netiol_init_target()");
-		// reserve room for this structure
-		target->arch_info = calloc(1, sizeof(riscv_info_t));
-		if (!target->arch_info)
-			return ERROR_FAIL;
-		riscv_info_t *info = (riscv_info_t *) target->arch_info;
-		// init structure with default values
-		riscv_info_init(target, info);
-		info->cmd_ctx = cmd_ctx;
+	LOG_DEBUG("netiol_init_target()");
+	// reserve room for this structure
+	target->arch_info = calloc(1, sizeof(struct riscv_info));
+	if (!target->arch_info)
+		return ERROR_FAIL;
+	struct riscv_info *info = (struct riscv_info *) target->arch_info;
+	// init structure with default values
+	riscv_info_init(target, info);
 
-		// for what use, i don't know
-		//select_dtmcontrol.num_bits = target->tap->ir_length;
-		//select_dbus.num_bits = target->tap->ir_length;
-		//select_idcode.num_bits = target->tap->ir_length;
+	info->cmd_ctx = cmd_ctx;
+
+	// for what use, i don't know
+	//select_dtmcontrol.num_bits = target->tap->ir_length;
+	//select_dbus.num_bits = target->tap->ir_length;
+	//select_idcode.num_bits = target->tap->ir_length;
 	return ERROR_OK;
 }
 
@@ -594,7 +595,7 @@ int netiol_set_breakpoint(struct target *target, struct breakpoint *breakpoint){
 			return ERROR_TARGET_UNALIGNED_ACCESS;
 		}
 
-		breakpoint->set = true;
+		breakpoint->is_set = true;
 		LOG_DEBUG("[hi][break][0x%08" PRIx64 "][set]: orig instr: %d(0x%08x)",breakpoint->address, breakpoint->length, orig_instruction);
 
 	}else{
@@ -622,7 +623,7 @@ int hi_netiol_remove_breakpoint(struct target *target,
 		}else{
 			orig_instr = le_to_h_u32(breakpoint->orig_instr);
 		}
-		breakpoint->set = false;
+		breakpoint->is_set = false;
 		LOG_DEBUG("[hi][break][0x%08" PRIx64 "][remove]: removed BKPT_SOFT instr: (%d)0x%08x", breakpoint->address,breakpoint->length*8, orig_instr);
 	}else{
 		LOG_INFO("[hi][break][0x%08" PRIx64 "][remove][err]: netIOL (zeroRiscy) only supports software breakpoints!",breakpoint->address);
@@ -1557,7 +1558,7 @@ const char * netIOL_riscv_init_registers(struct target *target)
 			r->name = reg_name; // wenn der Wert belegt ist, dann herueber kopieren
 		reg_name += strlen(reg_name) + 1;
 		assert(reg_name < info->reg_names + GDB_REGNO_COUNT * max_reg_name_len);
-		r->value = info->reg_cache_values[number];
+		r->value = calloc(1, DIV_ROUND_UP(r->size, 8));
 	} // end for-loop done for every register
 	return ERROR_OK;
 }
@@ -1573,8 +1574,8 @@ static int netIOL_riscv_get_gdb_reg_list(struct target *target,
 		enum target_register_class reg_class)
 {
 	RISCV_INFO(r);
-	LOG_DEBUG("reg_class=%d", reg_class);
-	LOG_DEBUG("rtos_hartid=%d current_hartid=%d", r->rtos_hartid, r->current_hartid);
+	LOG_DEBUG("[%s] {%d} reg_class=%d",
+	                target_name(target), r->current_hartid, reg_class);
 
 	if (!target->reg_cache) {
 		LOG_ERROR("Target not initialized. Return ERROR_FAIL.");
