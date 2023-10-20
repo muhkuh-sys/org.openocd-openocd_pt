@@ -10,10 +10,6 @@ SET(PROJECT_VERSION "${VERSION_EXTERNAL}.${VERSION_PACKAGE}")
 INCLUDE(ExternalProject)
 
 
-# Python is required for the patch script.
-FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
-
-
 #----------------------------------------------------------------------------
 
 SET(LIBUSB_INSTALL_PATH "${CMAKE_BINARY_DIR}/external/libusb/install")
@@ -94,8 +90,8 @@ CONFIGURE_FILE(installer/openocd.xml
 ADD_CUSTOM_TARGET(pack
                   COMMAND ${CMAKE_MAKE_PROGRAM}
                   COMMAND ${CMAKE_MAKE_PROGRAM} package
-                  COMMAND "${PYTHON_EXECUTABLE}" ${CMAKE_HOME_DIRECTORY}/cmake/tools/generate_hash.py ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}-${JONCHKI_PLATFORM}.xml
-                  COMMAND "${PYTHON_EXECUTABLE}" ${CMAKE_HOME_DIRECTORY}/cmake/tools/generate_hash.py ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}-${JONCHKI_PLATFORM}.tar.xz
+                  COMMAND "${PYTHON_INTERPRETER}" ${CMAKE_HOME_DIRECTORY}/cmake/tools/generate_hash.py ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}-${JONCHKI_PLATFORM}.xml
+                  COMMAND "${PYTHON_INTERPRETER}" ${CMAKE_HOME_DIRECTORY}/cmake/tools/generate_hash.py ${CPACK_OUTPUT_FILE_PREFIX}/openocd-${PROJECT_VERSION}-${JONCHKI_PLATFORM}.tar.xz
                   COMMENT "Pack the artifact and generate the hashes...")
 
 

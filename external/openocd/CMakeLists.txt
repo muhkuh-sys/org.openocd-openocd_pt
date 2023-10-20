@@ -9,9 +9,6 @@ SET(PROJECT_VERSION "${VERSION_EXTERNAL}")
 INCLUDE(ExternalProject)
 
 
-# Python is required for the patch script.
-FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
-
 ExternalProject_Add(TARGET_openocd
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/openocd
                     URL ${CMAKE_CURRENT_SOURCE_DIR}/openocd-0.12.0.tar.bz2
