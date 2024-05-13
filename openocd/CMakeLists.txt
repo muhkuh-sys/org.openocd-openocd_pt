@@ -21,7 +21,7 @@ IF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a)
 ELSE(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         SET(LIBOPENOCD_LDFLAGS "")
-        SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a -ludev -pthread)
+        SET(LIBUSB_LIBRARIES ${LIBUSB_INSTALL_PATH}/lib/libusb-1.0.a -ludev -pthread -lm -lutil -ldl)
 ENDIF(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 
 ADD_LIBRARY(LIBRARY_libopenocd SHARED
